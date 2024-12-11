@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EDAS.BacktrackingCombinatro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EDAS.WebApp", "EDAS.WebApp\EDAS.WebApp.csproj", "{16A2B2B9-7E18-47D7-A7B8-B319FF7E959E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EDAS.Worker", "EDAS.Worker\EDAS.Worker.csproj", "{F4AA2C36-740B-4A6D-A1EA-397F67894D46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EDAS.Common", "EDAS.Common\EDAS.Common.csproj", "{7C71CD6B-F098-4091-B8CD-86D8BDAFFC91}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{16A2B2B9-7E18-47D7-A7B8-B319FF7E959E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16A2B2B9-7E18-47D7-A7B8-B319FF7E959E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16A2B2B9-7E18-47D7-A7B8-B319FF7E959E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4AA2C36-740B-4A6D-A1EA-397F67894D46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4AA2C36-740B-4A6D-A1EA-397F67894D46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4AA2C36-740B-4A6D-A1EA-397F67894D46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4AA2C36-740B-4A6D-A1EA-397F67894D46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C71CD6B-F098-4091-B8CD-86D8BDAFFC91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C71CD6B-F098-4091-B8CD-86D8BDAFFC91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C71CD6B-F098-4091-B8CD-86D8BDAFFC91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C71CD6B-F098-4091-B8CD-86D8BDAFFC91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

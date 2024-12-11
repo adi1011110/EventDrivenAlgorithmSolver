@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using EDAS.WebApp.Data;
 using EDAS.WebApp.Areas.Identity.Data;
+using EDAS.WebApp.Services;
+using EDAS.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,11 @@ builder.Services.AddDefaultIdentity<EDASWebAppUser>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddSingleton(sp =>
+    new RabbitMQClientService(RabbitMQConfig.HOSTNAME, RabbitMQConfig.USERNAME, RabbitMQConfig.PASSWORD));
+
+builder.Services.AddTransient<IProducerService, ProducerService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -38,8 +45,6 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-
-
 
 app.MapRazorPages();
 
