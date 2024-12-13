@@ -1,0 +1,52 @@
+﻿@model EDAS.WebApp.Models.CombinatronicsVM
+
+<h1>Combinations page</h1>
+
+<div class="container border p-3">
+    <p class="fw-bolder fs-4">N choose K where N represents the total number of elements in the set, K the number of elements in a subset.</p>
+    <p class="fw-bolder fs-4">3rd field represents the elements (integers) separated by commas.</p>
+    <div class="badge bg-primary text-wrap fs-4">Example: N=4; K=2; Integers: 1, 3, 5, 10</div>
+</div>
+
+<form method="post" asp-action="Combinatronics" asp-controller="Algorithm">
+    <div class="container border p-3">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row">
+            <div class="col-2">
+                <label asp-for=@Model.N class="control-label pt-2" style="font-size:20px;"></label>
+            </div>
+            <div class="col-2 pb-3">
+                <input asp-for=@Model.N type="number" min="1" step="1" class="form-control" />
+                <span asp-validation-for=@Model.N class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                <label asp-for=@Model.K class="control-label pt-2" style="font-size:20px;"></label>
+            </div>
+            <div class="col-2 pb-3">
+                <input asp-for=@Model.K type="number" min="1" step="1" class="form-control" />
+                <span asp-validation-for=@Model.K class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                <label asp-for=@Model.ElementsCSV class="control-label pt-2" style="font-size:20px;"></label>
+            </div>
+            <div class="col-6 pb-3">
+                <input asp-for=@Model.ElementsCSV class="form-control" />
+                <span asp-validation-for=@Model.ElementsCSV class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-4">
+                <input type="submit" value="Submit" class="btn btn-success form-control" />
+            </div>
+        </div>
+    </div>
+</form>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

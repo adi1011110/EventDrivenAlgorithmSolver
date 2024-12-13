@@ -6,7 +6,7 @@ public static class RabbitMQConfig
 {
     public const string HOSTNAME = "localhost";
 
-    public const string PORT = "5672";
+    public const string PORT = "15672";
 
     public const string USERNAME = "guest";
 

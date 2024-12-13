@@ -18,7 +18,7 @@ public class ProducerService : IProducerService
 
     public async Task SendMessageAsync(ProducerMessage message)
     {
-        using var channel = await _rabbitMQClientService.GetChannelAsync();
+        var channel = await _rabbitMQClientService.GetChannelAsync();
 
         await channel.ExchangeDeclareAsync(exchange: RabbitMQConfig.EXCHANGE_NAME,
             type: RabbitMQConfig.EXCHANGE_TYPE);
