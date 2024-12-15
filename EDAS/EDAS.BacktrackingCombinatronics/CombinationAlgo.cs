@@ -1,8 +1,23 @@
 ﻿namespace EDAS.BacktrackingCombinatronics;
 
-public record CombinationAlgoInput(int N, int K, List<int> Elements);
+public class CombinationAlgoInput 
+{
+    public int N { get; set; }
 
-public record CombinationAlgoOutput(List<List<int>> Solution);
+    public int K { get; set; }
+
+    public List<int> Elements { get; set; }
+} 
+
+public class CombinationAlgoOutput
+{
+    public List<List<int>> Solution { get; set; }
+
+    public CombinationAlgoOutput()
+    {
+        Solution = new List<List<int>>();
+    }
+}
 
 public class CombinationAlgo : ICombinationAlgo
 {
@@ -18,7 +33,7 @@ public class CombinationAlgo : ICombinationAlgo
     {
         _algoInput = input;
         _algoInput.Elements.Insert(0, 0);
-        _algoOutput = new CombinationAlgoOutput(new List<List<int>> ());
+        _algoOutput = new CombinationAlgoOutput();
     }
 
     public CombinationAlgoOutput Run()
@@ -30,7 +45,7 @@ public class CombinationAlgo : ICombinationAlgo
         }
         catch (Exception e) 
         {
-            return new CombinationAlgoOutput(new List<List<int>>());
+            return new CombinationAlgoOutput();
         }
     }
 
