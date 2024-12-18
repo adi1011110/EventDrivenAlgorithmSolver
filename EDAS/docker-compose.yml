@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  edas.users.db:
+    image: mcr.microsoft.com/mssql/server
+
+  messagebroker:
+    image: rabbitmq:4.0-management
+
+  edas.webapp:
+    image: ${DOCKER_REGISTRY-}edas.webapp
+    build:
+      context: .
+      dockerfile: EDAS.WebApp/DockerFile
+
+EDAS.WebApp\Dockerfile
+
+
+

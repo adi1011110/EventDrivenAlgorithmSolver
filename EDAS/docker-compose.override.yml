@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  edas.users.db:
+    container_name: edas.users.db
+    environment:
+        - ACCEPT_EULA=Y
+        - SA_PASSWORD=SwN12345678
+    restart: always
+    ports:
+        - "1433:1433"
+
+  messagebroker:
+    container_name: messagebroker
+    hostname: edas-mq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  edas.webapp:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__Database=Server=edas.users.db;Database=EDAS.WebApp;User Id=sa;Password=SwN12345678;Encrypt=False;TrustServerCertificate=True
+      - MessageBroker__Host=amqp://edas-mq:5672
+      - MessageBroker__UserName=guest
+      - MessageBroker__Password=guest
+      - FeatureManagement__OrderFullfilment=false
+    depends_on:
+      - edas.users.db
+      - messagebroker
+    ports:
+      - "6003:8080"
+      - "6063:8081"
