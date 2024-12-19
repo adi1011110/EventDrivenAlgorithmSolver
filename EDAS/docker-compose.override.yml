@@ -35,7 +35,7 @@ services:
       - RabbitMq__Password=guest
     depends_on:
       edasusersdb:
-        condition: service_healthy
+        condition: service_started
       rabbitmq:
         condition: service_healthy
     ports:

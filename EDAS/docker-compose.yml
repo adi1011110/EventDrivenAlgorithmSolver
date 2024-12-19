@@ -1,11 +1,12 @@
 services:
-  edasusersdb:
-    image: mcr.microsoft.com/mssql/server
-
-  messagebroker:
-    image: rabbitmq:4.0-management
-
   edas.webapp:
     image: ${DOCKER_REGISTRY-}edaswebapp
     build:
       context: .
+      dockerfile: EDAS.WebApp/Dockerfile
+
+  edasusersdb:
+    image: mcr.microsoft.com/mssql/server
+
+  rabbitmq:
+    image: rabbitmq:4.0-management
