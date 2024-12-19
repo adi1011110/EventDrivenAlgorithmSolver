@@ -13,7 +13,6 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["EDAS.WebApp/EDAS.WebApp.csproj", "EDAS.WebApp/"]
-COPY ["EDAS.Common/EDAS.Common.csproj", "EDAS.Common/"]
 RUN dotnet restore "./EDAS.WebApp/EDAS.WebApp.csproj"
 COPY . .
 WORKDIR "/src/EDAS.WebApp"

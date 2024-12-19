@@ -75,7 +75,7 @@ namespace EDAS.Worker.Services.Queues
                 }
             };
 
-            await _channel.BasicConsumeAsync(queue: RabbitMQConfig.QUEUE_NAME,
+            await _channel.BasicConsumeAsync(queue: _rabbitMqConfig.QueueName,
                 autoAck: false,
                 consumer: consumer);
         }

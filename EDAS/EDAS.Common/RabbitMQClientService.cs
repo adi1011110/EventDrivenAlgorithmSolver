@@ -5,30 +5,58 @@ namespace EDAS.WebApp.Services;
 public class RabbitMQClientService : IDisposable
 {
 
-    private readonly IConnection _connection;
+    private IConnection _connection;
     private IChannel _channel;
+    private readonly string _hostname;
+    private readonly string _username;
+    private readonly string _password;
 
     public RabbitMQClientService(string hostname, string username, string password)
     {
-        var factory = new ConnectionFactory
-        {
-            HostName = hostname,
-            UserName = username,
-            Password = password
-        };
-
-        _connection = factory.CreateConnectionAsync().GetAwaiter().GetResult();
-        _channel = _connection.CreateChannelAsync().GetAwaiter().GetResult();
+        _hostname = hostname;
+        _username = username;
+        _password = password;
     }
 
     public async Task<IChannel> GetChannelAsync()
     {
-        if (_channel == null || _channel.IsClosed)
+        if(_connection == null || (!_connection.IsOpen))
         {
+            await GetConnectionAsync();
+        }
+
+        if (_channel == null || _channel.IsClosed)
+        {            
             _channel = await _connection.CreateChannelAsync();
         }
 
         return _channel;
+    }
+
+    private async Task GetConnectionAsync()
+    {
+        var factory = new ConnectionFactory
+        {
+            HostName = _hostname,
+            UserName = _username,
+            Password = _password,
+            Port = 5672
+        };
+
+        var maxRetries = 10; // Number of retries
+        var delay = TimeSpan.FromSeconds(5); // Time between retries
+
+        for (int i = 0; i < maxRetries; i++)
+        {
+            try
+            {
+                _connection = factory.CreateConnectionAsync().GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                await Task.Delay(delay);
+            }
+        }
     }
 
     public void Dispose()
