@@ -1,83 +1,85 @@
-﻿using RabbitMQ.Client;
+﻿namespace EDAS.Worker.Services.Queues;
 
-namespace EDAS.Worker.Services.Queues
+public class CombinatronicsQueue : IRabbitMQueue
 {
-    public class CombinatronicsQueue : IRabbitMQueue
+
+    private readonly IChannel _channel;
+    private readonly RabbitMqConfig _rabbitMqConfig;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly IMapper _mapper;
+
+    public CombinatronicsQueue(IChannel channel,
+        RabbitMqConfig rabbitMqConfigOption,
+        IServiceProvider serviceProvider,
+        IMapper mapper)
     {
+        _channel = channel;
+        _rabbitMqConfig = rabbitMqConfigOption;
+        _serviceProvider = serviceProvider;
+        _mapper = mapper;
+    }
 
-        private readonly IChannel _channel;
-        private readonly RabbitMqConfig _rabbitMqConfig;
-        private readonly IServiceProvider _serviceProvider;
-        private readonly IMapper _mapper;
+    public async Task StartConsuming()
+    {
+        await _channel.ExchangeDeclareAsync(exchange: _rabbitMqConfig.ExchangeName,
+                        type: _rabbitMqConfig.ExchangeType);
 
-        public CombinatronicsQueue(IChannel channel,
-            RabbitMqConfig rabbitMqConfigOption,
-            IServiceProvider serviceProvider,
-            IMapper mapper)
+        bool queueDurable = bool.TryParse(_rabbitMqConfig.QueueDurable, out bool queueDurableResult);
+        bool queueExclusive = bool.TryParse(_rabbitMqConfig.QueueExclusive, out bool queueExclusiveResult);
+        bool autoDelete = bool.TryParse(_rabbitMqConfig.QueueAutodelete, out bool autoDeleteResult);
+
+        await _channel.QueueDeclareAsync(
+            queue: _rabbitMqConfig.QueueName,
+            durable: queueDurable,
+            exclusive: queueExclusive,
+            autoDelete: autoDelete,
+            arguments: null);
+
+        await _channel.QueueBindAsync(queue: _rabbitMqConfig.QueueName,
+            exchange: _rabbitMqConfig.ExchangeName,
+            routingKey: _rabbitMqConfig.RoutingKey);
+
+        var consumer = new AsyncEventingBasicConsumer(_channel);
+
+        consumer.ReceivedAsync += async (model, ea) =>
         {
-            _channel = channel;
-            _rabbitMqConfig = rabbitMqConfigOption;
-            _serviceProvider = serviceProvider;
-            _mapper = mapper;
-        }
+            using var scope = _serviceProvider.CreateScope();
 
-        public async Task StartConsuming()
-        {
-            await _channel.ExchangeDeclareAsync(exchange: _rabbitMqConfig.ExchangeName,
-                            type: _rabbitMqConfig.ExchangeType);
+            var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
 
-            bool queueDurable = bool.TryParse(_rabbitMqConfig.QueueDurable, out bool queueDurableResult);
-            bool queueExclusive = bool.TryParse(_rabbitMqConfig.QueueExclusive, out bool queueExclusiveResult);
-            bool autoDelete = bool.TryParse(_rabbitMqConfig.QueueAutodelete, out bool autoDeleteResult);
+            var emailService = scope.ServiceProvider.GetRequiredService<IEmailSender>();
+            //await emailService.SendEmailAsync("", "", "");
 
-            await _channel.QueueDeclareAsync(
-                queue: _rabbitMqConfig.QueueName,
-                durable: queueDurable,
-                exclusive: queueExclusive,
-                autoDelete: autoDelete,
-                arguments: null);
-
-            await _channel.QueueBindAsync(queue: _rabbitMqConfig.QueueName,
-                exchange: _rabbitMqConfig.ExchangeName,
-                routingKey: _rabbitMqConfig.RoutingKey);
-
-            var consumer = new AsyncEventingBasicConsumer(_channel);
-
-            consumer.ReceivedAsync += async (model, ea) =>
+            var body = ea.Body.ToArray();
+            var message = Encoding.UTF8.GetString(body);
+            var inputModel = JsonConvert.DeserializeObject<CombinationsInputModel>(message);
+            try
             {
-                using var scope = _serviceProvider.CreateScope();
+                var algorithmCommand = _mapper.Map<CombinationsInput>(inputModel);
+                var combinationsOutput = await mediator.Send(algorithmCommand);
 
-                var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+                var emailContent = Utils.BuildEmailContent(
+                    inputModel.EmailAddress, 
+                    "Combinations solution", 
+                    inputModel,
+                    combinationsOutput);
 
-                var emailService = scope.ServiceProvider.GetRequiredService<IEmailSender>();
-                await emailService.SendEmailAsync("", "", "");
+                await emailService.SendEmailAsync(emailContent.ToEmail,
+                    emailContent.Title,
+                    emailContent.Content);
 
-                var body = ea.Body.ToArray();
-                var message = Encoding.UTF8.GetString(body);
-                var inputModel = JsonConvert.DeserializeObject<CombinationsInputModel>(message);
-                try
-                {
-                    var algorithmCommand = _mapper.Map<CombinationsInput>(inputModel);
-                    var combinationsOutput = await mediator.Send(algorithmCommand);
+                await _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
+            }
+            catch (Exception e)
+            {
+                //message will not be validated hence it will be sent by the broker again after some time
+                //log exception here
+                return;
+            }
+        };
 
-                    //TO DO: use user's email address
-                    await emailService.SendEmailAsync("adrianrcotuna@gmail.com",
-                        "Solution",
-                        combinationsOutput.ToString());
-
-                    await _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
-                }
-                catch (Exception e)
-                {
-                    //message will not be validated hence it will be sent by the broker again
-                    //log exception here
-                    return;
-                }
-            };
-
-            await _channel.BasicConsumeAsync(queue: _rabbitMqConfig.QueueName,
-                autoAck: false,
-                consumer: consumer);
-        }
+        await _channel.BasicConsumeAsync(queue: _rabbitMqConfig.QueueName,
+            autoAck: false,
+            consumer: consumer);
     }
 }

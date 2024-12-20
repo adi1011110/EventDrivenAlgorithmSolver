@@ -1,7 +1,7 @@
 {
   "RabbitMqConfig": {
     "Broker": {
-      "Hostname": "rabbitmq",
+      "Hostname": "localhost",
       "Port": "5672",
       "Username": "guest", /*move to secrets*/
       "Password": "guest", /*move to secrets*/

@@ -1,21 +1,27 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
 
 namespace EDAS.WebApp.Controllers;
 
+[Authorize]
 public class AlgorithmController : Controller
 {
     private readonly BrokerConfig _brokerConfig;
     private readonly QueueConfigCollection _queueConfigCollection;
     private readonly IProducerFactory _producerFactory;
+    private readonly UserManager<EDASWebAppUser> _userManager;
 
     public AlgorithmController(
         IOptions<BrokerConfig> brokerConfigOption,
         QueueConfigCollection queueConfigCollection,
-        IProducerFactory producerFactory)
+        IProducerFactory producerFactory,
+        UserManager<EDASWebAppUser> userManager)
     {
         _brokerConfig = brokerConfigOption.Value;
         _queueConfigCollection = queueConfigCollection;
         _producerFactory = producerFactory;
+        _userManager = userManager;
     }
 
     [HttpGet]
@@ -39,7 +45,16 @@ public class AlgorithmController : Controller
     {
         if (ModelState.IsValid)
         {
-            var content = JsonConvert.SerializeObject(viewModel);
+            var user = await _userManager.GetUserAsync(User);
+
+            if(user == null)
+            {
+                ModelState.AddModelError("Authentication", "User could nout be found");
+                //TO DO: redirect to error page
+                return View(viewModel);
+            }
+
+            var email = user.Email;
 
             var producerType = ProducerType.Combinatronics;
 
@@ -49,10 +64,15 @@ public class AlgorithmController : Controller
 
             var producerService = await _producerFactory.Create(producerFactoryConfig);
 
-            var message = new ProducerMessage
+            var producerMessage = new ProducerMessage
             {
-                Message = content
+                EmailAddress = email,
+                N = viewModel.N,
+                K = viewModel.K,
+                ElementsCSV = viewModel.ElementsCSV
             };
+
+            var message = JsonConvert.SerializeObject(producerMessage);
 
             await producerService.SendMessageAsync(message);
 

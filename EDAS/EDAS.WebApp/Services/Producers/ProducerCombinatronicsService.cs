@@ -16,14 +16,14 @@ public class ProducerCombinatronicsService : IProducerService
         _exchangeConfig = exchangeConfig;
     }
 
-    public async Task SendMessageAsync(ProducerMessage message)
+    public async Task SendMessageAsync(string message)
     {
         var exchangeType = ExchangeTypeConverter.Convert(_exchangeConfig.ExchangeType);
 
         await _channel.ExchangeDeclareAsync(exchange: _exchangeConfig.ExchangeName,
             type: exchangeType);
 
-        var body = Encoding.UTF8.GetBytes(message.Message);
+        var body = Encoding.UTF8.GetBytes(message);
 
         await _channel.BasicPublishAsync(exchange: _exchangeConfig.ExchangeName,
             routingKey: _exchangeConfig.ExchangeKey,

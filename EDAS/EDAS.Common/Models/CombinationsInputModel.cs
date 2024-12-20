@@ -1,8 +1,20 @@
-﻿namespace EDAS.Common.Models;
+﻿using System.Text;
 
-public class CombinationsInputModel
+namespace EDAS.Common.Models;
+
+public class CombinationsInputModel : BaseInputModel
 {
     public int N { get; set; }
     public int K { get; set; }
     public string ElementsCSV { get; set; }
+
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine($"N = {N}");
+        sb.AppendLine($"K = {K}");
+        sb.AppendLine($"Elements = {ElementsCSV}");
+
+        return sb.ToString();
+    }
 }

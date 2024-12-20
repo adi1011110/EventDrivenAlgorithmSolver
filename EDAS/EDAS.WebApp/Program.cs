@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Identity;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("EDASWebAppContextConnection") 
@@ -12,6 +14,8 @@ builder.Services.AddDefaultIdentity<EDASWebAppUser>(options =>
     options.Password.RequireDigit = true;
     options.Password.RequireNonAlphanumeric = true;
 }).AddEntityFrameworkStores<EDASWebAppContext>();
+
+builder.Services.AddAuthentication();
 
 builder.Services.AddControllersWithViews();
 
@@ -52,6 +56,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
