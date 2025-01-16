@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Identity;
-
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("EDASWebAppContextConnection") 
