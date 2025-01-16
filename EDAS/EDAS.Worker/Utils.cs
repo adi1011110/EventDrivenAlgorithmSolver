@@ -1,4 +1,6 @@
-﻿namespace EDAS.Worker;
+﻿using EDAS.Worker.Handlers.Commands.Combinations;
+
+namespace EDAS.Worker;
 
 public static class Utils
 {

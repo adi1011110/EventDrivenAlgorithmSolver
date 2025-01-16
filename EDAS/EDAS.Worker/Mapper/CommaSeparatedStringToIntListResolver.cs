@@ -1,6 +1,11 @@
-﻿namespace EDAS.Worker.Mapper;
+﻿using EDAS.Worker.Handlers.Commands.Combinations;
 
-public class CommaSeparatedStringToIntListResolver : IValueResolver<CombinationsInputModel, CombinationsInput, List<int>>
+namespace EDAS.Worker.Mapper;
+
+public class CommaSeparatedStringToIntListResolver : IValueResolver<
+    CombinationsInputModel, 
+    CombinationsInput, 
+    List<int>>
 {
     public List<int> Resolve(CombinationsInputModel source, 
         CombinationsInput destination, 

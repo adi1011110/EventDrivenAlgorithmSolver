@@ -1,6 +1,4 @@
-﻿using EDAS.Worker.Services.Factory.CombinationsAlgo;
-
-namespace EDAS.Worker.Handlers.Commands;
+﻿namespace EDAS.Worker.Handlers.Commands.Combinations;
 
 public class CombinationsInput : IRequest<CombinationsOutput>
 {
@@ -12,24 +10,24 @@ public class CombinationsInput : IRequest<CombinationsOutput>
 
     public CombinationsInput()
     {
-        
+
     }
 }
 
-public class CombinationsOutput 
-{ 
+public class CombinationsOutput
+{
     public List<List<int>> Elements { get; set; }
 
     public CombinationsOutput()
     {
-        
+
     }
 
     public override string ToString()
     {
         StringBuilder sb = new StringBuilder();
 
-        foreach (var pair in Elements) 
+        foreach (var pair in Elements)
         {
             string current = string.Join(", ", pair) + "\n";
             sb.Append(current);
@@ -48,7 +46,7 @@ public class SolveCombinationsAlgorithmHandler(ICombinationsAlgorithmFactory com
 {
     public async Task<CombinationsOutput> Handle(CombinationsInput request, CancellationToken cancellationToken)
     {
-        if (request.Elements == null || request.Elements.Count == 0) 
+        if (request.Elements == null || request.Elements.Count == 0)
         {
             throw new ArgumentException("Bad arguments");
         }

@@ -1,4 +1,9 @@
-﻿namespace EDAS.Worker;
+﻿using EDAS.Sorting;
+using EDAS.Worker.Handlers.Commands.Combinations;
+using EDAS.Worker.Handlers.Commands.Sorting;
+using EDAS.Worker.Services.Factory.SortingAlgo;
+
+namespace EDAS.Worker;
 
 public static class DependencyInjection
 {
@@ -56,6 +61,8 @@ public static class DependencyInjection
 
         services.AddScoped<ICombinationsAlgorithmFactory, CombinationsAlgorithmFactory>();
 
+        services.AddScoped<ISortingAlgorithmFactory, SortingAlgorithmFactory>();
+
         services.AddScoped<IEmailSender, EmailSender>();
 
         services.AddScoped<IQueueFactory, QueueFactory>();
@@ -70,6 +77,9 @@ public static class DependencyInjection
 
         services.AddScoped(typeof(IRequestHandler<CombinationsInput, CombinationsOutput>),
             typeof(SolveCombinationsAlgorithmHandler));
+
+        services.AddScoped(typeof(IRequestHandler<SortingInputCommand, SortingOutputResult>), 
+            typeof(SolveSortingAlgorithmHandler));
 
         services.AddAutoMapper(typeof(MapperProfile));
 

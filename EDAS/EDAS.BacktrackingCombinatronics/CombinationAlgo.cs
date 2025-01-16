@@ -32,6 +32,7 @@ public class CombinationAlgo : ICombinationAlgo
     public CombinationAlgo(CombinationAlgoInput input)
     {
         _algoInput = input;
+        //padding
         _algoInput.Elements.Insert(0, 0);
         _algoOutput = new CombinationAlgoOutput();
     }

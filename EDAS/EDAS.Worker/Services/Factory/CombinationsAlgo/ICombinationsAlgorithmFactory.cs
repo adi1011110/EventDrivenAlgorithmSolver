@@ -1,8 +1,4 @@
-﻿using EDAS.BacktrackingCombinatronics;
+﻿namespace EDAS.Worker.Services.Factory.CombinationsAlgo;
 
-namespace EDAS.Worker.Services.Factory.CombinationsAlgo;
-
-public interface ICombinationsAlgorithmFactory
-{
-    ICombinationAlgo Create(CombinationAlgoInput input);
-}
+public interface ICombinationsAlgorithmFactory 
+    : IAlgorithmFactory<ICombinationAlgo, CombinationAlgoInput>;

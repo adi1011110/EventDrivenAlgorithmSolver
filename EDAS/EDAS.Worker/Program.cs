@@ -2,6 +2,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var rabbitMqConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "rabbitmqconfig.json");
 builder.Configuration.AddJsonFile(rabbitMqConfigPath, optional: false, reloadOnChange: true);
+builder.Configuration.AddEnvironmentVariables();
 
 builder.Services
     .RegisterConfigs(builder.Configuration)

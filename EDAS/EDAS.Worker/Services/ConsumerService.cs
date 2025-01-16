@@ -41,7 +41,7 @@ public class ConsumerService : BackgroundService
             _mapper, 
             queueType);
 
-        var queue = queueFactory.Generate(queueFacoryConfig);
+        var queue = queueFactory.Create(queueFacoryConfig);
 
         await queue.StartConsuming();
 
