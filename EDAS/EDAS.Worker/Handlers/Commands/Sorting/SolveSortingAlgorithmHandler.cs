@@ -1,11 +1,27 @@
 ﻿using EDAS.Sorting;
 using EDAS.Worker.Services.Factory.SortingAlgo;
+using System.Runtime.ConstrainedExecution;
 
 namespace EDAS.Worker.Handlers.Commands.Sorting;
 
-public record SortingInputCommand(List<int> Numbers) : IRequest<SortingOutputResult>;
+public class SortingInputCommand : IRequest<SortingOutputResult>
+{
+    public List<int> Numbers { get; set; }
 
-public record SortingOutputResult(List<int> OutputSortedNumber);
+    public SortingInputCommand()
+    {
+    }
+}
+
+public class SortingOutputResult 
+{
+    public List<int> OutputSortedNumber { get; set; }
+
+    public override string ToString()
+    {
+        return string.Join(", ", OutputSortedNumber);
+    }
+}
 
 public class SolveSortingAlgorithmHandler(ISortingAlgorithmFactory factory, IMapper mapper)
     : IRequestHandler<SortingInputCommand, SortingOutputResult>

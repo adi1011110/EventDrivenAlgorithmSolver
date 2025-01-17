@@ -3,7 +3,7 @@
 namespace EDAS.Worker.Services.Factory.SortingAlgo;
 
 public class SortingAlgorithmFactory : 
-    BaseAlgorithmFactory<ISortingAlgo, SortingAlgoInput>,
+    BaseAlgorithmFactory<EDAS.Sorting.SortingAlgo, SortingAlgoInput>,
     ISortingAlgorithmFactory
 {
     public SortingAlgorithmFactory(IServiceProvider serviceProvider) : base(serviceProvider)

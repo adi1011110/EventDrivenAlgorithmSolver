@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using EDAS.WebApp.Models.Messages;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
 
@@ -64,7 +65,7 @@ public class AlgorithmController : Controller
 
             var producerService = await _producerFactory.Create(producerFactoryConfig);
 
-            var producerMessage = new ProducerMessage
+            var producerMessage = new ProducerCombinatronicsMessage
             {
                 EmailAddress = email,
                 N = viewModel.N,
@@ -81,6 +82,57 @@ public class AlgorithmController : Controller
 
         return View();
     }
+
+    [HttpGet]
+    [Route("[controller]/Sorting/[action]")]
+    public IActionResult QuickSort()
+    {
+        var viewModel = new SortingVM();
+
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    [Route("[controller]/Sorting/[action]")]
+    public async Task<IActionResult> QuickSort([FromForm] SortingVM viewModel)
+    {
+        if (ModelState.IsValid)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                ModelState.AddModelError("Authentication", "User could nout be found");
+                //TO DO: redirect to error page
+                return View(viewModel);
+            }
+
+            var email = user.Email;
+
+            var producerType = ProducerType.Sorting;
+
+            var queueConfig = _queueConfigCollection.QueuesConfig[producerType];
+
+            var producerFactoryConfig = new ProducerFactoryConfig(queueConfig, producerType);
+
+            var producerService = await _producerFactory.Create(producerFactoryConfig);
+
+            var producerMessage = new ProducerSortingMessage
+            {
+                EmailAddress = email,
+                ElementsCSV = viewModel.ElementsCSV
+            };
+
+            var message = JsonConvert.SerializeObject(producerMessage);
+
+            await producerService.SendMessageAsync(message);
+
+            return RedirectToAction(nameof(SubmissionSuccessful));
+        }
+
+        return View();
+    }
+
 
     [HttpGet]
     public IActionResult SubmissionSuccessful()

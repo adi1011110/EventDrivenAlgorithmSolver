@@ -17,6 +17,14 @@
         "QueueExclusive": "false",
         "QueueAutodelete": "false",
         "AlgorithmType": "Combinatronics"
+      },
+      "Sorting": {
+        "QueueName": "sorting_queue",
+        "RoutingKey": "algorithm.sorting.quicksort",
+        "QueueDurable": "true",
+        "QueueExclusive": "false",
+        "QueueAutodelete": "false",
+        "AlgorithmType": "Sorting"
       }
     }
   }

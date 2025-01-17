@@ -1,6 +1,4 @@
-﻿using RabbitMQ.Client;
-
-namespace EDAS.WebApp.Models;
+﻿namespace EDAS.WebApp.Models;
 
 public class ProducerFactoryConfig
 {
