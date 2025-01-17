@@ -19,3 +19,6 @@ global using System.Net.Http.Headers;
 global using EDAS.Worker.Services.Factory.CombinationsAlgo;
 global using EDAS.Worker.Services.Factory.QueueFactory;
 global using EDAS.Worker;
+global using EDAS.Worker.Models.Enums;
+global using EDAS.Worker.Handlers.Commands.Sorting;
+global using EDAS.Worker.Utils;

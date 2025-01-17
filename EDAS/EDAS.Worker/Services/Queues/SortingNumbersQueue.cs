@@ -1,6 +1,4 @@
-﻿using EDAS.Worker.Handlers.Commands.Combinations;
-
-namespace EDAS.Worker.Services.Queues;
+﻿namespace EDAS.Worker.Services.Queues;
 
 public class SortingNumbersQueue : BaseQueue, IRabbitMQueue
 {
@@ -34,5 +32,30 @@ public class SortingNumbersQueue : BaseQueue, IRabbitMQueue
 
         var body = ea.Body.ToArray();
         var message = Encoding.UTF8.GetString(body);
+
+        var input = JsonConvert.DeserializeObject<SortingInputModel>(message);
+
+        try
+        {
+            var command = _mapper.Map<SortingInputCommand>(input);
+
+            var output = await mediator.Send(command);
+
+            var emailContent = EmailContentBuilder.BuildEmailContent(
+                    input.EmailAddress,
+                    "Sorting solution",
+                    input,
+                    output);
+
+            await emailService.SendEmailAsync(emailContent.ToEmail,
+                emailContent.Title,
+                emailContent.Content);
+
+            await _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
+        }
+        catch(Exception e)
+        {
+            return;
+        }
     }
 }

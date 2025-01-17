@@ -1,4 +1,5 @@
 ﻿using EDAS.Worker.Handlers.Commands.Combinations;
+using EDAS.Worker.Utils;
 
 namespace EDAS.Worker.Services.Queues;
 
@@ -38,11 +39,11 @@ public class CombinatronicsQueue : BaseQueue, IRabbitMQueue
         try
         {
             //1. Solve algorithm
-            var algorithmCommand = _mapper.Map<CombinationsInput>(inputModel);
+            var algorithmCommand = _mapper.Map<CombinationsInputCommand>(inputModel);
             var combinationsOutput = await mediator.Send(algorithmCommand);
 
             //2. Build/send email
-            var emailContent = Utils.BuildEmailContent(
+            var emailContent = EmailContentBuilder.BuildEmailContent(
                 inputModel.EmailAddress,
                 "Combinations solution",
                 inputModel,

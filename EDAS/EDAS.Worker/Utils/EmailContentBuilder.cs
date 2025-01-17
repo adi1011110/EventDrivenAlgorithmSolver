@@ -1,14 +1,17 @@
-﻿using EDAS.Worker.Handlers.Commands.Combinations;
+﻿namespace EDAS.Worker.Utils;
 
-namespace EDAS.Worker;
-
-public static class Utils
+public static class EmailContentBuilder
 {
-    public static EmailContent BuildEmailContent(string toEmail, 
-        string subject, 
-        CombinationsInputModel input, 
-        CombinationsOutput output)
+    public static EmailContent BuildEmailContent<TInput, TOutput>(string toEmail,
+        string subject,
+        TInput input,
+        TOutput output)
     {
+        if((!VerifyToString.IsOverriden<TInput>()) || (!VerifyToString.IsOverriden<TOutput>()))
+        {
+            throw new Exception("Generic arguments need to overried ToString() method");
+        }
+
         var emailContent = new EmailContent();
         emailContent.Title = subject;
         emailContent.ToEmail = toEmail;

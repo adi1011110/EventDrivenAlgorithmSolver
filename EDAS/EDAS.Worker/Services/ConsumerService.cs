@@ -1,13 +1,10 @@
-﻿using EDAS.Worker.Models.Enums;
-using EDAS.Worker.Services.Factory.QueueFactory;
-
-namespace EDAS.Worker.Services;
+﻿namespace EDAS.Worker.Services;
 
 public class ConsumerService : BackgroundService
 {
     private readonly RabbitMQClientService _rabbitMQClientService;
     private IChannel _channel;
-    private readonly ISender _sender;
+    //private readonly ISender _sender;
     private readonly IMapper _mapper;
     private readonly IServiceProvider _serviceProvider;
     private readonly RabbitMqConfig _rabbitMqConfig;
@@ -25,7 +22,6 @@ public class ConsumerService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-
         _channel = await _rabbitMQClientService.GetChannelAsync();
 
         using var scope = _serviceProvider.CreateScope();

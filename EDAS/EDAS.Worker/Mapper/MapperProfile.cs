@@ -10,18 +10,23 @@ public class MapperProfile : Profile
 {
 	public MapperProfile()
 	{
-        CreateMap<CombinationsInputModel, CombinationsInput>()
+        CreateMap<CombinationsInputModel, CombinationsInputCommand>()
              .ForMember(dest => dest.Elements, 
-             opt => opt.MapFrom<CommaSeparatedStringToIntListResolver>());
+             opt => opt.MapFrom<CommaSeparatedStringToIntCombinatronicsResolver>());
 
-        CreateMap<CombinationsInput, CombinationAlgoInput>();
+        CreateMap<CombinationsInputCommand, CombinationAlgoInput>();
 
         CreateMap<CombinationAlgoOutput, CombinationsOutput>()
             .ForMember(dest => dest.Elements,
                 opt => opt.MapFrom(src => src.Solution));
 
         CreateMap<SortingInputCommand, SortingAlgoInput>();
+
         CreateMap<SortingAlgoOutput, SortingOutputResult>();
+
+        CreateMap<SortingInputModel, SortingInputCommand>()
+            .ForMember(dest => dest.Numbers,
+            opt => opt.MapFrom<CommaSeparatedStringToIntSortingResolver>());
     }
 
 }

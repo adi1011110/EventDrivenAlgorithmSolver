@@ -75,7 +75,7 @@ public static class DependencyInjection
             config.RegisterServicesFromAssembly(assembly);
         });
 
-        services.AddScoped(typeof(IRequestHandler<CombinationsInput, CombinationsOutput>),
+        services.AddScoped(typeof(IRequestHandler<CombinationsInputCommand, CombinationsOutput>),
             typeof(SolveCombinationsAlgorithmHandler));
 
         services.AddScoped(typeof(IRequestHandler<SortingInputCommand, SortingOutputResult>), 

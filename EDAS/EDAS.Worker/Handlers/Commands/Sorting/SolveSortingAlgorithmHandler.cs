@@ -3,9 +3,9 @@ using EDAS.Worker.Services.Factory.SortingAlgo;
 
 namespace EDAS.Worker.Handlers.Commands.Sorting;
 
-public record SortingInputCommand(int[] Numbers) : IRequest<SortingOutputResult>;
+public record SortingInputCommand(List<int> Numbers) : IRequest<SortingOutputResult>;
 
-public record SortingOutputResult(int[] OutputSortedNumber);
+public record SortingOutputResult(List<int> OutputSortedNumber);
 
 public class SolveSortingAlgorithmHandler(ISortingAlgorithmFactory factory, IMapper mapper)
     : IRequestHandler<SortingInputCommand, SortingOutputResult>
