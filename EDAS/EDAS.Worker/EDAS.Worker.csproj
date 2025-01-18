@@ -16,9 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\EDAS.Sorting\EDAS.Sorting.csproj" />
     <ProjectReference Include="..\EDAS.BacktrackingCombinatronics\EDAS.BacktrackingCombinatronics.csproj" />
     <ProjectReference Include="..\EDAS.Common\EDAS.Common.csproj" />
+    <ProjectReference Include="..\EDAS.Sorting\EDAS.Sorting.csproj" />
   </ItemGroup>
 
 </Project>

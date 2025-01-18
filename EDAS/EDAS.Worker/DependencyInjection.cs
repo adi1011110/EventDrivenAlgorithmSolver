@@ -18,6 +18,8 @@ public static class DependencyInjection
 
         services.Configure<BrokerConfig>(configuration.GetSection("RabbitMqConfig:Broker"));
 
+        services.Configure<EmailConfig>(configuration.GetSection("EmailConfig"));
+
         var queuesDict = configuration
             .GetSection("RabbitMqConfig:Queues")
             .Get<Dictionary<string, QueueConfig>>();
@@ -57,8 +59,6 @@ public static class DependencyInjection
 
     public static IServiceCollection RegisterServices(this IServiceCollection services)
     {
-        services.AddHostedService<ConsumerService>();
-
         services.AddScoped<ICombinationsAlgorithmFactory, CombinationsAlgorithmFactory>();
 
         services.AddScoped<ISortingAlgorithmFactory, SortingAlgorithmFactory>();
