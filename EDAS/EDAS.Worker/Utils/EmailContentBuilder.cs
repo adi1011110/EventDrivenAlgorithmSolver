@@ -15,12 +15,20 @@ public static class EmailContentBuilder
         var emailContent = new EmailContent();
         emailContent.Title = subject;
         emailContent.ToEmail = toEmail;
+        string newHtmlLine = "<br>";
 
         StringBuilder content = new StringBuilder();
-        content.AppendLine("Input: ");
+        content.AppendLine("Input:");
+        content.AppendLine(newHtmlLine);
+
         content.AppendLine(input.ToString());
-        content.AppendLine("Output: ");
+        content.AppendLine(newHtmlLine);
+
+        content.AppendLine("Output:");
+        content.AppendLine(newHtmlLine);
+
         content.AppendLine(output.ToString());
+        content.AppendLine(newHtmlLine);
 
         emailContent.Content = content.ToString();
 

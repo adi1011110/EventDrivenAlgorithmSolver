@@ -29,7 +29,7 @@ public class CombinationsOutput
 
         foreach (var pair in Elements)
         {
-            string current = string.Join(", ", pair) + "\n";
+            string current = string.Join(", ", pair) + "<br>";
             sb.Append(current);
         }
 

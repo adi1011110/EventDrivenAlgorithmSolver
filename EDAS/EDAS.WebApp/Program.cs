@@ -1,3 +1,6 @@
+using EDAS.WebApp.Services.Email;
+using System.Configuration;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("EDASWebAppContextConnection") 
@@ -5,12 +8,18 @@ var connectionString = builder.Configuration.GetConnectionString("EDASWebAppCont
 
 builder.Services.AddDbContext<EDASWebAppContext>(options => options.UseSqlServer(connectionString));
 
+builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfig"));
+
 builder.Services.AddDefaultIdentity<EDASWebAppUser>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = true;
-    options.SignIn.RequireConfirmedEmail = true;
     options.Password.RequireDigit = true;
-    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 10;
+    options.Lockout.MaxFailedAccessAttempts = 3;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+    options.SignIn.RequireConfirmedEmail = true;
 }).AddEntityFrameworkStores<EDASWebAppContext>();
 
 builder.Services.AddAuthentication();
@@ -39,6 +48,8 @@ builder.Services.AddSingleton(sp =>
 builder.Services.AddScoped<IProducerFactory, ProducerFactory>();
 
 builder.Services.AddSingleton(queuesConfigCollection);
+
+builder.Services.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, EmailService>();
 
 var app = builder.Build();
 

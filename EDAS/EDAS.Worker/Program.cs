@@ -1,4 +1,5 @@
 var host = Host.CreateDefaultBuilder(args)
+    .UseConsoleLifetime()
     .ConfigureAppConfiguration((context, config) =>
     {
         var env = context.HostingEnvironment;
@@ -7,9 +8,17 @@ var host = Host.CreateDefaultBuilder(args)
         {
             config.AddUserSecrets<Program>();
         }
+
         var rabbitMqConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, 
             "rabbitmqconfig.json");
-        config.AddJsonFile(rabbitMqConfigPath, optional: false, reloadOnChange: true);
+
+        config.AddJsonFile(rabbitMqConfigPath, 
+            optional: false, 
+            reloadOnChange: true)
+              .AddJsonFile($"appsettings.{env.EnvironmentName}.json", 
+              optional: true, 
+              reloadOnChange: true);
+
         config.AddEnvironmentVariables();
     })
     .ConfigureServices((context, services) =>
