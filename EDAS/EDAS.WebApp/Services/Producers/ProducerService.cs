@@ -3,13 +3,13 @@ using System.Text;
 
 namespace EDAS.WebApp.Services.Producers;
 
-public class ProducerCombinatronicsService : IProducerService
+public class ProducerService : IProducerService
 {
 
     private readonly IChannel _channel;
     private readonly BrokerExchangeConfig _exchangeConfig;
 
-    public ProducerCombinatronicsService(IChannel channel,
+    public ProducerService(IChannel channel,
         BrokerExchangeConfig exchangeConfig)
     {
         _channel = channel;

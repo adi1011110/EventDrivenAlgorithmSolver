@@ -1,4 +1,9 @@
-﻿namespace EDAS.Worker;
+﻿using EDAS.Sorting;
+using EDAS.Worker.Handlers.Commands.Combinations;
+using EDAS.Worker.Handlers.Commands.Sorting;
+using EDAS.Worker.Services.Factory.SortingAlgo;
+
+namespace EDAS.Worker;
 
 public static class DependencyInjection
 {
@@ -12,6 +17,8 @@ public static class DependencyInjection
         var workerType = configuration["WorkerType:Type"];
 
         services.Configure<BrokerConfig>(configuration.GetSection("RabbitMqConfig:Broker"));
+
+        services.Configure<EmailConfig>(configuration.GetSection("EmailConfig"));
 
         var queuesDict = configuration
             .GetSection("RabbitMqConfig:Queues")
@@ -52,9 +59,9 @@ public static class DependencyInjection
 
     public static IServiceCollection RegisterServices(this IServiceCollection services)
     {
-        services.AddHostedService<ConsumerService>();
-
         services.AddScoped<ICombinationsAlgorithmFactory, CombinationsAlgorithmFactory>();
+
+        services.AddScoped<ISortingAlgorithmFactory, SortingAlgorithmFactory>();
 
         services.AddScoped<IEmailSender, EmailSender>();
 
@@ -68,8 +75,11 @@ public static class DependencyInjection
             config.RegisterServicesFromAssembly(assembly);
         });
 
-        services.AddScoped(typeof(IRequestHandler<CombinationsInput, CombinationsOutput>),
+        services.AddScoped(typeof(IRequestHandler<CombinationsInputCommand, CombinationsOutput>),
             typeof(SolveCombinationsAlgorithmHandler));
+
+        services.AddScoped(typeof(IRequestHandler<SortingInputCommand, SortingOutputResult>), 
+            typeof(SolveSortingAlgorithmHandler));
 
         services.AddAutoMapper(typeof(MapperProfile));
 

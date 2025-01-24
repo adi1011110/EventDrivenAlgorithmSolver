@@ -1,13 +1,10 @@
-﻿using EDAS.Worker.Handlers.Commands.Combinations;
-using EDAS.Worker.Utils;
+﻿namespace EDAS.Worker.Services.Queues;
 
-namespace EDAS.Worker.Services.Queues;
-
-public class CombinatronicsQueue : BaseQueue, IRabbitMQueue
+public class SortingNumbersQueue : BaseQueue, IRabbitMQueue
 {
-    public CombinatronicsQueue(IChannel channel,
-        RabbitMqConfig rabbitMqConfigOption,
-        IServiceProvider serviceProvider,
+    public SortingNumbersQueue(IChannel channel, 
+        RabbitMqConfig rabbitMqConfigOption, 
+        IServiceProvider serviceProvider, 
         IMapper mapper) : base(channel, rabbitMqConfigOption, serviceProvider, mapper)
     {
     }
@@ -35,19 +32,20 @@ public class CombinatronicsQueue : BaseQueue, IRabbitMQueue
 
         var body = ea.Body.ToArray();
         var message = Encoding.UTF8.GetString(body);
-        var inputModel = JsonConvert.DeserializeObject<CombinationsInputModel>(message);
+
+        var input = JsonConvert.DeserializeObject<SortingInputModel>(message);
+
         try
         {
-            //1. Solve algorithm
-            var algorithmCommand = _mapper.Map<CombinationsInputCommand>(inputModel);
-            var combinationsOutput = await mediator.Send(algorithmCommand);
+            var command = _mapper.Map<SortingInputCommand>(input);
 
-            //2. Build/send email
+            var output = await mediator.Send(command);
+
             var emailContent = EmailContentBuilder.BuildEmailContent(
-                inputModel.EmailAddress,
-                "Combinations solution",
-                inputModel,
-                combinationsOutput);
+                    input.EmailAddress,
+                    "Sorting solution",
+                    input,
+                    output);
 
             await emailService.SendEmailAsync(emailContent.ToEmail,
                 emailContent.Title,
@@ -55,10 +53,8 @@ public class CombinatronicsQueue : BaseQueue, IRabbitMQueue
 
             await _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
         }
-        catch (Exception e)
+        catch(Exception e)
         {
-            //message will not be validated hence it will be sent by the broker again after some time
-            //log exception here
             return;
         }
     }

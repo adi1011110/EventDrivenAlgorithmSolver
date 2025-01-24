@@ -1,15 +1,16 @@
 ﻿namespace EDAS.Worker.Services.Factory.CombinationsAlgo;
 
-public class CombinationsAlgorithmFactory : ICombinationsAlgorithmFactory
+public class CombinationsAlgorithmFactory 
+    : BaseAlgorithmFactory<CombinationAlgo, CombinationAlgoInput>, 
+    ICombinationsAlgorithmFactory
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public CombinationsAlgorithmFactory(IServiceProvider serviceProvider)
+    public CombinationsAlgorithmFactory(IServiceProvider serviceProvider) : base(serviceProvider)
     {
-        _serviceProvider = serviceProvider;
     }
-    public ICombinationAlgo Create(CombinationAlgoInput input)
+
+    ICombinationAlgo IAlgorithmFactory<ICombinationAlgo, CombinationAlgoInput>.Create(
+        CombinationAlgoInput input)
     {
-        return ActivatorUtilities.CreateInstance<CombinationAlgo>(_serviceProvider, input);
+        return base.Create(input);
     }
 }

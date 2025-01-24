@@ -1,12 +1,36 @@
-var builder = WebApplication.CreateBuilder(args);
+var host = Host.CreateDefaultBuilder(args)
+    .UseConsoleLifetime()
+    .ConfigureAppConfiguration((context, config) =>
+    {
+        var env = context.HostingEnvironment;
 
-var rabbitMqConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "rabbitmqconfig.json");
-builder.Configuration.AddJsonFile(rabbitMqConfigPath, optional: false, reloadOnChange: true);
+        if (env.IsDevelopment())
+        {
+            config.AddUserSecrets<Program>();
+        }
 
-builder.Services
-    .RegisterConfigs(builder.Configuration)
-    .RegisterServices();
+        var rabbitMqConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, 
+            "rabbitmqconfig.json");
 
-var app = builder.Build();
+        config.AddJsonFile(rabbitMqConfigPath, 
+            optional: false, 
+            reloadOnChange: true)
+              .AddJsonFile($"appsettings.{env.EnvironmentName}.json", 
+              optional: true, 
+              reloadOnChange: true);
 
-app.Run();
+        config.AddEnvironmentVariables();
+    })
+    .ConfigureServices((context, services) =>
+    {
+        var configuration = context.Configuration;
+
+        services
+            .RegisterConfigs(configuration)
+            .RegisterServices();
+        
+        services.AddHostedService<ConsumerService>();
+    })
+    .Build();
+
+await host.RunAsync();

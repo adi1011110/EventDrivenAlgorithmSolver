@@ -31,7 +31,8 @@ public class ProducerFactory : IProducerFactory
 
         return config.producerType switch
         {
-            ProducerType.Combinatronics => new ProducerCombinatronicsService(channel, exchangeConfig),
+            ProducerType.Combinatronics => new ProducerService(channel, exchangeConfig),
+            ProducerType.Sorting => new ProducerService(channel, exchangeConfig),
             _ => throw new ArgumentException("ProducerFactory : Invalid option")
         };
 

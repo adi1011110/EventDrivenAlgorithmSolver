@@ -2,11 +2,11 @@
 
 namespace EDAS.Common.Models;
 
-public class CombinationsInputModel : BaseInputModel
+public class CombinationsInputModel : BaseCSVElementsInputModel
 {
     public int N { get; set; }
     public int K { get; set; }
-    public string ElementsCSV { get; set; }
+    
 
     public override string ToString()
     {

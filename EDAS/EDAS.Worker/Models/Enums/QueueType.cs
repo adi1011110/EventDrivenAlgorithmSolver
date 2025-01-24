@@ -2,5 +2,6 @@
 
 public enum QueueType
 {
-    Combinatronics = 1
+    Combinatronics,
+    Sorting
 }

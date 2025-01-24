@@ -1,8 +1,6 @@
-﻿using EDAS.Worker.Services.Factory.CombinationsAlgo;
+﻿namespace EDAS.Worker.Handlers.Commands.Combinations;
 
-namespace EDAS.Worker.Handlers.Commands;
-
-public class CombinationsInput : IRequest<CombinationsOutput>
+public class CombinationsInputCommand : IRequest<CombinationsOutput>
 {
     public int N { get; set; }
 
@@ -10,28 +8,28 @@ public class CombinationsInput : IRequest<CombinationsOutput>
 
     public List<int> Elements { get; set; }
 
-    public CombinationsInput()
+    public CombinationsInputCommand()
     {
-        
+
     }
 }
 
-public class CombinationsOutput 
-{ 
+public class CombinationsOutput
+{
     public List<List<int>> Elements { get; set; }
 
     public CombinationsOutput()
     {
-        
+
     }
 
     public override string ToString()
     {
         StringBuilder sb = new StringBuilder();
 
-        foreach (var pair in Elements) 
+        foreach (var pair in Elements)
         {
-            string current = string.Join(", ", pair) + "\n";
+            string current = string.Join(", ", pair) + "<br>";
             sb.Append(current);
         }
 
@@ -44,16 +42,16 @@ public class CombinationsOutput
 
 public class SolveCombinationsAlgorithmHandler(ICombinationsAlgorithmFactory combinationAlgoFactory,
     IMapper mapper)
-    : IRequestHandler<CombinationsInput, CombinationsOutput>
+    : IRequestHandler<CombinationsInputCommand, CombinationsOutput>
 {
-    public async Task<CombinationsOutput> Handle(CombinationsInput request, CancellationToken cancellationToken)
+    public async Task<CombinationsOutput> Handle(CombinationsInputCommand request, CancellationToken cancellationToken)
     {
-        if (request.Elements == null || request.Elements.Count == 0) 
+        if (request.Elements == null || request.Elements.Count == 0)
         {
             throw new ArgumentException("Bad arguments");
         }
 
-        var input = mapper.Map<CombinationsInput, CombinationAlgoInput>(request);
+        var input = mapper.Map<CombinationsInputCommand, CombinationAlgoInput>(request);
 
         var combinationService = combinationAlgoFactory.Create(input);
 

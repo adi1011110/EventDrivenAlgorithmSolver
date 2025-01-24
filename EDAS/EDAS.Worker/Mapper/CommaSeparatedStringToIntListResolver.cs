@@ -1,9 +1,15 @@
-﻿namespace EDAS.Worker.Mapper;
+﻿using EDAS.Worker.Handlers.Commands.Combinations;
+using EDAS.Worker.Handlers.Commands.Sorting;
+using System.Collections;
 
-public class CommaSeparatedStringToIntListResolver : IValueResolver<CombinationsInputModel, CombinationsInput, List<int>>
+namespace EDAS.Worker.Mapper;
+
+public class CommaSeparatedStringToIntListResolver<TSource, TDestination> 
+    : IValueResolver<TSource, TDestination, List<int>>
+    where TSource : BaseCSVElementsInputModel
 {
-    public List<int> Resolve(CombinationsInputModel source, 
-        CombinationsInput destination, 
+    public List<int> Resolve(TSource source,
+        TDestination destination,
         List<int> destMember, 
         ResolutionContext context)
     {
@@ -14,10 +20,10 @@ public class CommaSeparatedStringToIntListResolver : IValueResolver<Combinations
 
         try
         {
-             elements = source.ElementsCSV
-                .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                .Select(int.Parse)
-                .ToList();
+            elements = source.ElementsCSV
+               .Split(',', StringSplitOptions.RemoveEmptyEntries)
+               .Select(int.Parse)
+               .ToList();
         }
         catch
         {
@@ -28,3 +34,16 @@ public class CommaSeparatedStringToIntListResolver : IValueResolver<Combinations
 
     }
 }
+
+public class CommaSeparatedStringToIntCombinatronicsResolver : 
+    CommaSeparatedStringToIntListResolver<
+        CombinationsInputModel, 
+        CombinationsInputCommand>
+{
+}
+
+public class CommaSeparatedStringToIntSortingResolver :
+    CommaSeparatedStringToIntListResolver<
+        SortingInputModel,
+        SortingInputCommand>
+{ }

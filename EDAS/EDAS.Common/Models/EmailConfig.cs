@@ -1,4 +1,4 @@
-﻿namespace EDAS.Worker.Models;
+﻿namespace EDAS.Common.Models;
 
 public class EmailConfig
 {
