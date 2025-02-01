@@ -9,3 +9,4 @@ global using EDAS.WebApp.Models;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.Extensions.Options;
 global using EDAS.WebApp.Mapper;
+global using EDAS.WebApp.Extensions;

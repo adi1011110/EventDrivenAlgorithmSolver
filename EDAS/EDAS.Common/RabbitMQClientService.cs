@@ -6,16 +6,12 @@ public class RabbitMQClientService : IDisposable, IAsyncDisposable
 {
     private IConnection _connection;
     private IChannel _channel;
-    private readonly string _hostname;
-    private readonly string _username;
-    private readonly string _password;
+    private readonly string _uri;
     private readonly SemaphoreSlim _connectionLock = new SemaphoreSlim(1, 1);
 
-    public RabbitMQClientService(string hostname, string username, string password)
+    public RabbitMQClientService(string uri)
     {
-        _hostname = hostname;
-        _username = username;
-        _password = password;
+        _uri = uri;
     }
 
     public async Task<IChannel> GetChannelAsync()
@@ -46,12 +42,9 @@ public class RabbitMQClientService : IDisposable, IAsyncDisposable
 
     private async Task GetConnectionAsync()
     {
-        var factory = new ConnectionFactory
+        var factory = new ConnectionFactory()
         {
-            HostName = _hostname,
-            UserName = _username,
-            Password = _password,
-            Port = 5672
+            Uri = new Uri(_uri)
         };
 
         var maxRetries = 10;

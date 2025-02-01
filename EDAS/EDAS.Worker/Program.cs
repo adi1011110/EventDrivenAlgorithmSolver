@@ -1,36 +1,22 @@
-var host = Host.CreateDefaultBuilder(args)
-    .UseConsoleLifetime()
-    .ConfigureAppConfiguration((context, config) =>
-    {
-        var env = context.HostingEnvironment;
+var builder = WebApplication.CreateBuilder(args);
 
-        if (env.IsDevelopment())
-        {
-            config.AddUserSecrets<Program>();
-        }
+var rabbitMqConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "rabbitmqconfig.json");
+builder.Configuration.AddJsonFile(rabbitMqConfigPath, optional: false, reloadOnChange: true);
+builder.Configuration.AddEnvironmentVariables();
 
-        var rabbitMqConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, 
-            "rabbitmqconfig.json");
+builder.Services
+    .RegisterConfigs(builder)
+    .RegisterServices();
 
-        config.AddJsonFile(rabbitMqConfigPath, 
-            optional: false, 
-            reloadOnChange: true)
-              .AddJsonFile($"appsettings.{env.EnvironmentName}.json", 
-              optional: true, 
-              reloadOnChange: true);
+builder.Services.AddHostedService<ConsumerService>();
 
-        config.AddEnvironmentVariables();
-    })
-    .ConfigureServices((context, services) =>
-    {
-        var configuration = context.Configuration;
+var app = builder.Build();
 
-        services
-            .RegisterConfigs(configuration)
-            .RegisterServices();
-        
-        services.AddHostedService<ConsumerService>();
-    })
-    .Build();
+app.MapGet("/", 
+    () => Results.Json(
+                new{ 
+                    status = "running", 
+                    message = "Worker is handling RabbitMQ messages.", timestamp = DateTime.UtcNow 
+                }));
 
-await host.RunAsync();
+app.Run();
