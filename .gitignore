@@ -397,3 +397,6 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 /EDAS/TemplateEngineHost/vs
+/EDAS/EDAS.WebApp/EDASWebApp.db-wal
+/EDAS/EDAS.WebApp/EDASWebApp.db-shm
+/EDAS/EDAS.WebApp/EDASWebApp.db

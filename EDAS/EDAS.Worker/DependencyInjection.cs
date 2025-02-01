@@ -47,9 +47,7 @@ public static class DependencyInjection
 
         services.AddSingleton(sp =>
         {
-            return new RabbitMQClientService(brokerConfig.Hostname,
-                                    brokerConfig.Username,
-                                    brokerConfig.Password);
+            return new RabbitMQClientService("");
         });
 
         services.AddSingleton(queuesConfigCollection);

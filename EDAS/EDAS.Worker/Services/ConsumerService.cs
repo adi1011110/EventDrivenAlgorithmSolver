@@ -4,7 +4,6 @@ public class ConsumerService : BackgroundService
 {
     private readonly RabbitMQClientService _rabbitMQClientService;
     private IChannel _channel;
-    //private readonly ISender _sender;
     private readonly IMapper _mapper;
     private readonly IServiceProvider _serviceProvider;
     private readonly RabbitMqConfig _rabbitMqConfig;
@@ -29,7 +28,7 @@ public class ConsumerService : BackgroundService
         var queueFactory = scope.ServiceProvider.GetRequiredService<IQueueFactory>();
 
         //solve
-        var queueType = ConvertStringToEnum(_rabbitMqConfig.AlgorithmType);
+        var queueType = QueueHelper.ConvertStringToEnum(_rabbitMqConfig.AlgorithmType);
 
         var queueFacoryConfig = new QueueFactoryConfig(_channel, 
             _rabbitMqConfig, 
@@ -42,16 +41,5 @@ public class ConsumerService : BackgroundService
         await queue.StartConsuming();
 
         while (!stoppingToken.IsCancellationRequested) { }
-    }
-
-    private QueueType ConvertStringToEnum(string enumString)
-    {
-        var algoTypeLower = enumString.ToLower();
-
-        var algoType = algoTypeLower.Substring(0, 1).ToUpper() + algoTypeLower.Substring(1);
-
-        Enum.TryParse<QueueType>(algoType, true, out QueueType queueType);
-
-        return queueType;
     }
 }
