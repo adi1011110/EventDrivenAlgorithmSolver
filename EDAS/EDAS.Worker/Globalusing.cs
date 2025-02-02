@@ -22,3 +22,8 @@ global using EDAS.Worker;
 global using EDAS.Worker.Models.Enums;
 global using EDAS.Worker.Handlers.Commands.Sorting;
 global using EDAS.Worker.Utils;
+global using Azure.Identity;
+global using Azure.Security.KeyVault.Secrets;
+global using EDAS.WebApp.StaticDetails;
+global using EDAS.Worker.Handlers.Commands.Combinations;
+global using EDAS.Worker.Services.Factory.SortingAlgo;

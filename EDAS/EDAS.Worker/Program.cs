@@ -5,7 +5,7 @@ builder.Configuration.AddJsonFile(rabbitMqConfigPath, optional: false, reloadOnC
 builder.Configuration.AddEnvironmentVariables();
 
 builder.Services
-    .RegisterConfigs(builder.Configuration)
+    .RegisterConfigs(builder)
     .RegisterServices();
 
 builder.Services.AddHostedService<ConsumerService>();

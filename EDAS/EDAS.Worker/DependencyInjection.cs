@@ -1,32 +1,46 @@
-﻿using EDAS.Sorting;
-using EDAS.Worker.Handlers.Commands.Combinations;
-using EDAS.Worker.Handlers.Commands.Sorting;
-using EDAS.Worker.Services.Factory.SortingAlgo;
-
-namespace EDAS.Worker;
+﻿namespace EDAS.Worker;
 
 public static class DependencyInjection
 {
     public static IServiceCollection RegisterConfigs(this IServiceCollection services,
-        IConfiguration configuration)
+        WebApplicationBuilder appBuilder)
     {
-        services.Configure<EmailConfig>(configuration.GetSection("EmailConfig"));
+        var keyVaultName = appBuilder.Configuration["AzureConfig:KeyVaultName"];
 
-        services.Configure<WorkerType>(configuration.GetSection("WorkerType"));
+        var keyVaultUri = new Uri($"https://{keyVaultName}.vault.azure.net");
 
-        var workerType = configuration["WorkerType:Type"];
+        var secretClient = new SecretClient(keyVaultUri, new DefaultAzureCredential());
 
-        services.Configure<BrokerConfig>(configuration.GetSection("RabbitMqConfig:Broker"));
+        var rabbitMqUrl = secretClient.GetSecret(SecretNames.RabbitMQ_Url);
+        var emailConfigApiKey = secretClient.GetSecret(SecretNames.EmailConfig_ApiKey);
+        var emailConfigFromEmail = secretClient.GetSecret(SecretNames.EmailConfig_FromEmail);
+        var emailConfigApiUrl = secretClient.GetSecret(SecretNames.EmailConfig_ApiUrl);
 
-        services.Configure<EmailConfig>(configuration.GetSection("EmailConfig"));
+        appBuilder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            { "RabbitMq:Url", rabbitMqUrl.Value.Value },
+            { "EmailConfig:ApiKey", emailConfigApiKey.Value.Value},
+            { "EmailConfig:FromEmail", emailConfigFromEmail.Value.Value},
+            { "EmailConfig:ApiUrl", emailConfigApiUrl.Value.Value},
+        });
 
-        var queuesDict = configuration
+        services.Configure<EmailConfig>(appBuilder.Configuration.GetSection("EmailConfig"));
+
+        services.Configure<WorkerType>(appBuilder.Configuration.GetSection("WorkerType"));
+
+        services.Configure<BrokerConfig>(appBuilder.Configuration.GetSection("RabbitMqConfig:Broker"));
+
+        services.Configure<EmailConfig>(appBuilder.Configuration.GetSection("EmailConfig"));
+
+        var workerType = appBuilder.Configuration["WorkerType:Type"];
+
+        var queuesDict = appBuilder.Configuration
             .GetSection("RabbitMqConfig:Queues")
             .Get<Dictionary<string, QueueConfig>>();
 
         var queueConfig = queuesDict[workerType];
 
-        var brokerConfig = configuration.GetSection("RabbitMqConfig:Broker").Get<BrokerConfig>();
+        var brokerConfig = appBuilder.Configuration.GetSection("RabbitMqConfig:Broker").Get<BrokerConfig>();
 
         var queuesConfigCollection = new QueueConfigCollection { QueuesConfig = queuesDict };
 
@@ -45,9 +59,11 @@ public static class DependencyInjection
             }; ;
         });
 
+        var rabbitMQUri = appBuilder.Configuration["RabbitMq:Url"];
+
         services.AddSingleton(sp =>
         {
-            return new RabbitMQClientService("");
+            return new RabbitMQClientService(rabbitMQUri);
         });
 
         services.AddSingleton(queuesConfigCollection);
