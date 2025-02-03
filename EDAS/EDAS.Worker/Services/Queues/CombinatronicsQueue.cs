@@ -1,7 +1,4 @@
-﻿using EDAS.Worker.Handlers.Commands.Combinations;
-using EDAS.Worker.Utils;
-
-namespace EDAS.Worker.Services.Queues;
+﻿namespace EDAS.Worker.Services.Queues;
 
 public class CombinatronicsQueue : BaseQueue, IRabbitMQueue
 {

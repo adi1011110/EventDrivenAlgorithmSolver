@@ -30,8 +30,6 @@ public static class DependencyInjection
 
         services.Configure<BrokerConfig>(appBuilder.Configuration.GetSection("RabbitMqConfig:Broker"));
 
-        services.Configure<EmailConfig>(appBuilder.Configuration.GetSection("EmailConfig"));
-
         var workerType = appBuilder.Configuration["WorkerType:Type"];
 
         var queuesDict = appBuilder.Configuration

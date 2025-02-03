@@ -22,6 +22,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Algorithms", "Algorithms", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EDAS.Sorting", "EDAS.Sorting\EDAS.Sorting.csproj", "{AEEE2A29-456B-4262-BDA8-756E527E405E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EDAS.AzureFunction", "..\EDAS.AzureFunction\EDAS.AzureFunction.csproj", "{FD2E7654-5E5A-46F3-A326-9C9AD56386D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{AEEE2A29-456B-4262-BDA8-756E527E405E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEEE2A29-456B-4262-BDA8-756E527E405E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AEEE2A29-456B-4262-BDA8-756E527E405E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD2E7654-5E5A-46F3-A326-9C9AD56386D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD2E7654-5E5A-46F3-A326-9C9AD56386D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD2E7654-5E5A-46F3-A326-9C9AD56386D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD2E7654-5E5A-46F3-A326-9C9AD56386D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
