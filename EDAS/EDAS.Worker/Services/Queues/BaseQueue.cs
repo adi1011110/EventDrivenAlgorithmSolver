@@ -1,11 +1,12 @@
 ﻿namespace EDAS.Worker.Services.Queues;
 
-public abstract class BaseQueue : IRabbitMQueue
+public abstract class BaseQueue<TInputModel, TInputCommand, TOutputCommand> : IRabbitMQueue where TInputModel : BaseInputModel 
 {
     protected readonly IChannel _channel;
     protected readonly RabbitMqConfig _rabbitMqConfig;
     protected readonly IServiceProvider _serviceProvider;
     protected readonly IMapper _mapper;
+    protected readonly GenericHandler<TInputModel, TInputCommand, TOutputCommand> _genericHandler;
 
     public BaseQueue(IChannel channel,
         RabbitMqConfig rabbitMqConfigOption,
@@ -16,12 +17,11 @@ public abstract class BaseQueue : IRabbitMQueue
         _rabbitMqConfig = rabbitMqConfigOption;
         _serviceProvider = serviceProvider;
         _mapper = mapper;
+        _genericHandler = new GenericHandler<TInputModel,TInputCommand, TOutputCommand>(serviceProvider);
     }
 
     public virtual async Task StartConsuming()
     {
-        //exchange/queue setup
-
         await _channel.ExchangeDeclareAsync(exchange: _rabbitMqConfig.ExchangeName,
                 type: _rabbitMqConfig.ExchangeType);
 
@@ -42,5 +42,10 @@ public abstract class BaseQueue : IRabbitMQueue
 
     }
 
-    protected abstract Task HandleMessage(object model, BasicDeliverEventArgs ea);
+    protected virtual async Task HandleMessage(object model, BasicDeliverEventArgs ea)
+    {
+        await _genericHandler.Handle(model, ea);
+
+        await _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
+    }
 }

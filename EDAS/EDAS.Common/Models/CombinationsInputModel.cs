@@ -6,7 +6,11 @@ public class CombinationsInputModel : BaseCSVElementsInputModel
 {
     public int N { get; set; }
     public int K { get; set; }
-    
+
+    public CombinationsInputModel()
+    {
+        Subject = "Combinatronics solution";
+    }
 
     public override string ToString()
     {

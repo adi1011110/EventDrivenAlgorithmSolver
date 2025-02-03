@@ -27,7 +27,6 @@ public class ConsumerService : BackgroundService
 
         var queueFactory = scope.ServiceProvider.GetRequiredService<IQueueFactory>();
 
-        //solve
         var queueType = QueueHelper.ConvertStringToEnum(_rabbitMqConfig.AlgorithmType);
 
         var queueFacoryConfig = new QueueFactoryConfig(_channel, 

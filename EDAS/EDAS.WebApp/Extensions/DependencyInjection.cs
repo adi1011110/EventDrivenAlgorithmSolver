@@ -1,5 +1,4 @@
 ﻿using EDAS.WebApp.Services.Database;
-using EDAS.WebApp.Services.Email;
 
 namespace EDAS.WebApp.Extensions;
 
@@ -53,6 +52,7 @@ public static class DependencyInjection
 
         appBuilder.Services.AddSingleton(queuesConfigCollection);
 
-        appBuilder.Services.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, EmailService>();
+        //TO DO: Fix
+        //appBuilder.Services.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, EmailService>();
     }
 }

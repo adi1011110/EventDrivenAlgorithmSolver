@@ -1,8 +1,8 @@
 ﻿namespace EDAS.Worker.Utils;
 
-public static class EmailContentBuilder
+public static class EmailRequestBuilder
 {
-    public static EmailContent BuildEmailContent<TInput, TOutput>(string toEmail,
+    public static EmailRequest BuildEmailRequest<TInput, TOutput>(string toEmail,
         string subject,
         TInput input,
         TOutput output)
@@ -12,9 +12,9 @@ public static class EmailContentBuilder
             throw new Exception("Generic arguments need to overried ToString() method");
         }
 
-        var emailContent = new EmailContent();
-        emailContent.Title = subject;
-        emailContent.ToEmail = toEmail;
+        var emailContent = new EmailRequest();
+        emailContent.Subject = subject;
+        emailContent.Email = toEmail;
         string newHtmlLine = "<br>";
 
         StringBuilder content = new StringBuilder();
@@ -30,7 +30,7 @@ public static class EmailContentBuilder
         content.AppendLine(output.ToString());
         content.AppendLine(newHtmlLine);
 
-        emailContent.Content = content.ToString();
+        emailContent.Message = content.ToString();
 
         return emailContent;
     }

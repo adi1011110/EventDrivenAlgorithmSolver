@@ -1,4 +1,6 @@
-﻿namespace EDAS.Worker;
+﻿using EDAS.Common.StaticDetails;
+
+namespace EDAS.Worker;
 
 public static class DependencyInjection
 {
@@ -12,16 +14,14 @@ public static class DependencyInjection
         var secretClient = new SecretClient(keyVaultUri, new DefaultAzureCredential());
 
         var rabbitMqUrl = secretClient.GetSecret(SecretNames.RabbitMQ_Url);
-        var emailConfigApiKey = secretClient.GetSecret(SecretNames.EmailConfig_ApiKey);
-        var emailConfigFromEmail = secretClient.GetSecret(SecretNames.EmailConfig_FromEmail);
-        var emailConfigApiUrl = secretClient.GetSecret(SecretNames.EmailConfig_ApiUrl);
+        var emailAppFunctionUrl = secretClient.GetSecret(SecretNames.EmailAppFunction_Url);
+        var emailAppFunctionKey = secretClient.GetSecret(SecretNames.EmailAppFunction_Key);
 
         appBuilder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
         {
             { "RabbitMq:Url", rabbitMqUrl.Value.Value },
-            { "EmailConfig:ApiKey", emailConfigApiKey.Value.Value},
-            { "EmailConfig:FromEmail", emailConfigFromEmail.Value.Value},
-            { "EmailConfig:ApiUrl", emailConfigApiUrl.Value.Value},
+            { "EmailConfig:AppFunctionUrl", emailAppFunctionUrl.Value.Value },
+            { "EmailConfig:AppFunctionKey", emailAppFunctionKey.Value.Value }
         });
 
         services.Configure<EmailConfig>(appBuilder.Configuration.GetSection("EmailConfig"));
@@ -71,11 +71,13 @@ public static class DependencyInjection
 
     public static IServiceCollection RegisterServices(this IServiceCollection services)
     {
+        services.AddHttpClient();
+
         services.AddScoped<ICombinationsAlgorithmFactory, CombinationsAlgorithmFactory>();
 
         services.AddScoped<ISortingAlgorithmFactory, SortingAlgorithmFactory>();
 
-        services.AddScoped<IEmailSender, EmailSender>();
+        services.AddScoped<IEmailService, EmailService>();
 
         services.AddScoped<IQueueFactory, QueueFactory>();
 
