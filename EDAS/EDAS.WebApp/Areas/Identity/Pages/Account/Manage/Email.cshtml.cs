@@ -20,12 +20,12 @@ namespace EDAS.WebApp.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<EDASWebAppUser> _userManager;
         private readonly SignInManager<EDASWebAppUser> _signInManager;
-        private readonly IEmailSender _emailSender;
+        private readonly IEmailService _emailSender;
 
         public EmailModel(
             UserManager<EDASWebAppUser> userManager,
             SignInManager<EDASWebAppUser> signInManager,
-            IEmailSender emailSender)
+            IEmailService emailSender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -124,10 +124,12 @@ namespace EDAS.WebApp.Areas.Identity.Pages.Account.Manage
                     pageHandler: null,
                     values: new { area = "Identity", userId = userId, email = Input.NewEmail, code = code },
                     protocol: Request.Scheme);
-                await _emailSender.SendEmailAsync(
-                    Input.NewEmail,
+
+                var emailRequest = EmailRequestBuilder.BuildEmailRequest(Input.NewEmail,
                     "Confirm your email",
                     $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                await _emailSender.SendEmailAsync(emailRequest);
 
                 StatusMessage = "Confirmation link to change email sent. Please check your email.";
                 return RedirectToPage();
@@ -160,10 +162,12 @@ namespace EDAS.WebApp.Areas.Identity.Pages.Account.Manage
                 pageHandler: null,
                 values: new { area = "Identity", userId = userId, code = code },
                 protocol: Request.Scheme);
-            await _emailSender.SendEmailAsync(
-                email,
+
+            var emailRequest = EmailRequestBuilder.BuildEmailRequest(email,
                 "Confirm your email",
                 $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+            await _emailSender.SendEmailAsync(emailRequest);
 
             StatusMessage = "Verification email sent. Please check your email.";
             return RedirectToPage();

@@ -40,8 +40,6 @@ public class GenericHandler<TInputModel, TInputCommand, TOutputCommand> where TI
         }
         catch(Exception e)
         {
-            var exText = e.Message.ToString();
-            int a = 5;
         }
     }
 }

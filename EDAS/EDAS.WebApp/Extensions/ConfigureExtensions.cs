@@ -1,6 +1,6 @@
 ﻿using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
-using EDAS.WebApp.StaticDetails;
+using EDAS.Common.StaticDetails;
 
 namespace EDAS.WebApp.Extensions;
 
@@ -15,16 +15,14 @@ public static class ConfigureExtensions
         var secretClient = new SecretClient(keyVaultUri, new DefaultAzureCredential());
 
         var rabbitMqUrl = secretClient.GetSecret(SecretNames.RabbitMQ_Url);
-        var emailConfigApiKey = secretClient.GetSecret(SecretNames.EmailConfig_ApiKey);
-        var emailConfigFromEmail = secretClient.GetSecret(SecretNames.EmailConfig_FromEmail);
-        var emailConfigApiUrl = secretClient.GetSecret(SecretNames.EmailConfig_ApiUrl);
+        var emailAppFunctionUrl = secretClient.GetSecret(SecretNames.EmailAppFunction_Url);
+        var emailAppFunctionKey = secretClient.GetSecret(SecretNames.EmailAppFunction_Key);
 
         appBuilder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
         {
             { "RabbitMq:Url", rabbitMqUrl.Value.Value },
-            { "EmailConfig:ApiKey", emailConfigApiKey.Value.Value},
-            { "EmailConfig:FromEmail", emailConfigFromEmail.Value.Value},
-            { "EmailConfig:ApiUrl", emailConfigApiUrl.Value.Value},
+            { "EmailConfig:AppFunctionUrl", emailAppFunctionUrl.Value.Value },
+            { "EmailConfig:AppFunctionKey", emailAppFunctionKey.Value.Value }
         });
 
         appBuilder.Services.Configure<EmailConfig>(appBuilder.Configuration.GetSection("EmailConfig"));

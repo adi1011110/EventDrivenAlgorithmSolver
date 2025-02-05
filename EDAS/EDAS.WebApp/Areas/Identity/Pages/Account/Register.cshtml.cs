@@ -19,9 +19,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using EDAS.Common.Services.Email;
+using EDAS.WebApp.Utils;
 
 namespace EDAS.WebApp.Areas.Identity.Pages.Account
 {
+    [AllowAnonymous]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<EDASWebAppUser> _signInManager;
@@ -29,14 +32,14 @@ namespace EDAS.WebApp.Areas.Identity.Pages.Account
         private readonly IUserStore<EDASWebAppUser> _userStore;
         private readonly IUserEmailStore<EDASWebAppUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailSender _emailSender;
+        private readonly IEmailService _emailSender;
 
         public RegisterModel(
             UserManager<EDASWebAppUser> userManager,
             IUserStore<EDASWebAppUser> userStore,
             SignInManager<EDASWebAppUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailService emailSender)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -132,8 +135,11 @@ namespace EDAS.WebApp.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                    var emailRequest = EmailRequestBuilder.BuildEmailRequest(Input.Email,
+                        "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                    await _emailSender.SendEmailAsync(emailRequest);
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {

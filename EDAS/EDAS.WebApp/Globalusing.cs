@@ -10,3 +10,5 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.Extensions.Options;
 global using EDAS.WebApp.Mapper;
 global using EDAS.WebApp.Extensions;
+global using EDAS.WebApp.Utils;
+global using EDAS.Common.Services.Email;

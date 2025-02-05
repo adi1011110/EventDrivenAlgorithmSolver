@@ -11,6 +11,7 @@ bool databaseDeletionCondition = conversionResult && deleteOnStartup;
 
 var app = builder.Build();
 
+
 if (databaseDeletionCondition)
 {
     app.DeleteDatabase().GetAwaiter().GetResult();

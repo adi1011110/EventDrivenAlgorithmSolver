@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using EDAS.Common.Services.Email;
 
 namespace EDAS.WebApp.Areas.Identity.Pages.Account
 {
@@ -28,7 +29,7 @@ namespace EDAS.WebApp.Areas.Identity.Pages.Account
         private readonly UserManager<EDASWebAppUser> _userManager;
         private readonly IUserStore<EDASWebAppUser> _userStore;
         private readonly IUserEmailStore<EDASWebAppUser> _emailStore;
-        private readonly IEmailSender _emailSender;
+        private readonly IEmailService _emailSender;
         private readonly ILogger<ExternalLoginModel> _logger;
 
         public ExternalLoginModel(
@@ -36,7 +37,7 @@ namespace EDAS.WebApp.Areas.Identity.Pages.Account
             UserManager<EDASWebAppUser> userManager,
             IUserStore<EDASWebAppUser> userStore,
             ILogger<ExternalLoginModel> logger,
-            IEmailSender emailSender)
+            IEmailService emailSender)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -174,8 +175,11 @@ namespace EDAS.WebApp.Areas.Identity.Pages.Account
                             values: new { area = "Identity", userId = userId, code = code },
                             protocol: Request.Scheme);
 
-                        await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                        var emailRequest = EmailRequestBuilder.BuildEmailRequest(Input.Email, 
+                            "Confirm your email",
                             $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                        await _emailSender.SendEmailAsync(emailRequest);
 
                         // If account confirmation is required, we need to show the link if we don't have a real email sender
                         if (_userManager.Options.SignIn.RequireConfirmedAccount)

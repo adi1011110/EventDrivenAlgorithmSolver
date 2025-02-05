@@ -21,11 +21,16 @@ public static class DependencyInjection
             options.Lockout.MaxFailedAccessAttempts = 3;
             options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
             options.SignIn.RequireConfirmedEmail = true;
+            options.SignIn.RequireConfirmedAccount = true;
         }).AddEntityFrameworkStores<EDASWebAppContext>();
 
         appBuilder.Services.AddAuthentication();
 
-        appBuilder.Services.AddControllersWithViews();
+        appBuilder.Services.AddControllersWithViews(options =>
+        {
+            options.Filters.Add(new Microsoft.AspNetCore.Mvc.Authorization.AuthorizeFilter());
+        });
+
 
         appBuilder.Services.AddAutoMapper(typeof(MapperProfile));
 
@@ -52,7 +57,8 @@ public static class DependencyInjection
 
         appBuilder.Services.AddSingleton(queuesConfigCollection);
 
-        //TO DO: Fix
-        //appBuilder.Services.AddTransient<Microsoft.AspNetCore.Identity.UI.Services.IEmailSender, EmailService>();
+        appBuilder.Services.AddHttpClient();
+
+        appBuilder.Services.AddScoped<IEmailService, EmailService>();
     }
 }
