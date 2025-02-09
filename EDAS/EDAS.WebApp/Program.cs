@@ -34,6 +34,15 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
+app.UseStatusCodePages(async context =>
+{
+    if (context.HttpContext.Response.StatusCode == 403 ||
+        context.HttpContext.Response.StatusCode == 401)
+    {
+        context.HttpContext.Response.Redirect("/Home/Welcome");
+    }
+});
+
 app.MapRazorPages();
 
 app.MapControllerRoute(

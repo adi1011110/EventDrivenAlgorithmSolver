@@ -1,4 +1,5 @@
 using EDAS.WebApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -18,6 +19,13 @@ namespace EDAS.WebApp.Controllers
             return View();
         }
 
+        [AllowAnonymous]
+        public IActionResult Welcome()
+        {
+            return View();
+        }
+
+        [AllowAnonymous]
         public IActionResult Privacy()
         {
             return View();

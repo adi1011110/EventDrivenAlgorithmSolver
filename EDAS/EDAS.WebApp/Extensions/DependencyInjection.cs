@@ -31,6 +31,11 @@ public static class DependencyInjection
             options.Filters.Add(new Microsoft.AspNetCore.Mvc.Authorization.AuthorizeFilter());
         });
 
+        appBuilder.Services.ConfigureApplicationCookie(options =>
+        {
+            options.LoginPath = "/Home/Welcome"; 
+            options.AccessDeniedPath = "/Home/Welcome";
+        });
 
         appBuilder.Services.AddAutoMapper(typeof(MapperProfile));
 
