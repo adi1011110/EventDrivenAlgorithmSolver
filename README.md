@@ -9,6 +9,10 @@ The **Event Driven Algorithm Solver** is a distributed system that allows users 
 - [Technologies](#technologies)
 
 ## Architecture Overview
+
+![edas_diagram2 drawio](https://github.com/user-attachments/assets/baf59086-b6e0-4bcc-bdc0-be362fd9e5b8)
+
+
 The system is composed of the following components:
 
 1. **Web Application (ASP.NET Core MVC)**
