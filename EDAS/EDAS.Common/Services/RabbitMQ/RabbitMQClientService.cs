@@ -1,17 +1,20 @@
-﻿using RabbitMQ.Client;
+﻿using EDAS.Common.Models;
+using Microsoft.Extensions.Options;
+using RabbitMQ.Client;
 
-namespace EDAS.WebApp.Services;
+namespace EDAS.Common.Services.RabbitMQ;
 
-public class RabbitMQClientService : IDisposable, IAsyncDisposable
+public class RabbitMQClientService<TConfig> : IRabbitMQClientService
+    where TConfig : class
 {
     private IConnection _connection;
     private IChannel _channel;
-    private readonly string _uri;
+    private readonly TConfig _config;
     private readonly SemaphoreSlim _connectionLock = new SemaphoreSlim(1, 1);
 
-    public RabbitMQClientService(string uri)
+    public RabbitMQClientService(IOptions<TConfig> config)
     {
-        _uri = uri;
+        _config = config.Value;
     }
 
     public async Task<IChannel> GetChannelAsync()
@@ -42,10 +45,7 @@ public class RabbitMQClientService : IDisposable, IAsyncDisposable
 
     private async Task GetConnectionAsync()
     {
-        var factory = new ConnectionFactory()
-        {
-            Uri = new Uri(_uri)
-        };
+        var factory = GetConnectionFactory(_config);
 
         var maxRetries = 10;
         var delay = TimeSpan.FromSeconds(5);
@@ -88,5 +88,35 @@ public class RabbitMQClientService : IDisposable, IAsyncDisposable
     public void Dispose()
     {
         DisposeAsync().AsTask().GetAwaiter().GetResult();
+    }
+
+    private ConnectionFactory GetConnectionFactory(TConfig config)
+    {
+        ConnectionFactory factory = null;
+
+        switch (config)
+        {
+            case RabbitMQLocalConfig localConfig:
+                factory = new ConnectionFactory
+                {
+                    HostName = localConfig.Hostname,
+                    UserName = localConfig.Username,
+                    Password = localConfig.Password,
+                    Port = int.Parse(localConfig.Port)
+                };
+                break;
+
+            case RabbitMQAzureConfig azureConfig:
+                factory = new ConnectionFactory()
+                {
+                    Uri = new Uri(azureConfig.Url)
+                };
+                break;
+
+            default:
+                throw new ArgumentException($"Unsupported config type: {typeof(TConfig).Name}");
+        }
+
+        return factory;
     }
 }

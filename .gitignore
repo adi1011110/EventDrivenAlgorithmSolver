@@ -400,3 +400,4 @@ FodyWeavers.xsd
 /EDAS/EDAS.WebApp/EDASWebApp.db-wal
 /EDAS/EDAS.WebApp/EDASWebApp.db-shm
 /EDAS/EDAS.WebApp/EDASWebApp.db
+/EDAS/.env

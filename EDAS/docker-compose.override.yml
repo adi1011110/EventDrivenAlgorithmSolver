@@ -1,13 +1,4 @@
 services:
-  edasusersdb:
-    container_name: edasusersdb
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=SwN12345678
-    restart: always
-    ports:
-      - "1433:1433"
-
   rabbitmq:
     container_name: rabbitmq
     environment:
@@ -25,19 +16,62 @@ services:
 
   edas.webapp:
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
-      - ConnectionStrings__Database=Server=edasusersdb;Database=EDASWebApp;User Id=sa;Password=SwN12345678;Encrypt=False;TrustServerCertificate=True
-      - RabbitMq__HostName=rabbitmq
-      - RabbitMq__Port=5672
-      - RabbitMq__UserName=guest
-      - RabbitMq__Password=guest
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://0.0.0.0:8080
+      - ConnectionStrings__DefaultConnection=Data Source=EDASWebApp.db
+      - RabbitMQConfig__Hostname=${RABBITMQ_CONFIG_HOSTNAME}
+      - RabbitMQConfig__Port=${RABBITMQ_CONFIG_PORT}
+      - RabbitMQConfig__Username=${RABBITMQ_CONFIG_USERNAME}
+      - RabbitMQConfig__Password=${RABBITMQ_CONFIG_PASSWORD}
+      - EmailConfig__FromEmail=${EMAIL_CONFIG_FROM_EMAIL}
+      - EmailConfig__ApiUrl=${EMAIL_CONFIG_API_URL}
+      - EmailConfig__ApiKey=${EMAIL_CONFIG_API_KEY}
     depends_on:
-      edasusersdb:
-        condition: service_started
       rabbitmq:
         condition: service_healthy
     ports:
       - "6001:8080"
-      - "6061:8081"
+    env_file:
+      - .env
+
+  edas.worker.sorting:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_HTTP_PORTS=8100
+      - ASPNETCORE_URLS=http://0.0.0.0:8100
+      - RabbitMQConfig__Hostname=${RABBITMQ_CONFIG_HOSTNAME}
+      - RabbitMQConfig__Port=${RABBITMQ_CONFIG_PORT}
+      - RabbitMQConfig__Username=${RABBITMQ_CONFIG_USERNAME}
+      - RabbitMQConfig__Password=${RABBITMQ_CONFIG_PASSWORD}
+      - EmailConfig__FromEmail=${EMAIL_CONFIG_FROM_EMAIL}
+      - EmailConfig__ApiUrl=${EMAIL_CONFIG_API_URL}
+      - EmailConfig__ApiKey=${EMAIL_CONFIG_API_KEY}
+      - WorkerType__Type=Sorting
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8100:8100"
+    env_file:
+      - .env
+
+  edas.worker.combinatronics:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_HTTP_PORTS=8097
+      - ASPNETCORE_URLS=http://0.0.0.0:8097
+      - RabbitMQConfig__Hostname=${RABBITMQ_CONFIG_HOSTNAME}
+      - RabbitMQConfig__Port=${RABBITMQ_CONFIG_PORT}
+      - RabbitMQConfig__Username=${RABBITMQ_CONFIG_USERNAME}
+      - RabbitMQConfig__Password=${RABBITMQ_CONFIG_PASSWORD}
+      - EmailConfig__FromEmail=${EMAIL_CONFIG_FROM_EMAIL}
+      - EmailConfig__ApiUrl=${EMAIL_CONFIG_API_URL}
+      - EmailConfig__ApiKey=${EMAIL_CONFIG_API_KEY}
+      - WorkerType__Type=Combinatronics
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8097:8097"
+    env_file:
+      - .env

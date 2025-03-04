@@ -1,5 +1,4 @@
 ﻿global using EDAS.Common;
-global using EDAS.WebApp.Services;
 global using EDAS.Worker.Handlers.Commands;
 global using EDAS.Worker.Mapper;
 global using EDAS.Worker.Models;

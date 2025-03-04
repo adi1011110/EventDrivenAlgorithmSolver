@@ -2,6 +2,7 @@
 
 public class EmailConfig
 {
-    public string AppFunctionUrl { get; set; }
-    public string AppFunctionKey { get; set; }
+    public string ApiKey { get; set; }
+    public string ApiUrl { get; set; }
+    public string FromEmail { get; set; }
 }

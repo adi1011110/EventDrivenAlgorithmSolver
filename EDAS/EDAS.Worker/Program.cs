@@ -1,3 +1,5 @@
+using EDAS.Worker.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var rabbitMqConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "rabbitmqconfig.json");
@@ -12,11 +14,16 @@ builder.Services.AddHostedService<ConsumerService>();
 
 var app = builder.Build();
 
-app.MapGet("/", 
+var workerType = Environment.GetEnvironmentVariable("WorkerType__Type");
+
+app.MapGet("/",
     () => Results.Json(
-                new{ 
-                    status = "running", 
-                    message = "Worker is handling RabbitMQ messages.", timestamp = DateTime.UtcNow 
+                new
+                {
+                    status = "running",
+                    message = "Worker is handling RabbitMQ messages.",
+                    workerType = workerType,
+                    timestamp = DateTime.UtcNow
                 }));
 
 app.Run();

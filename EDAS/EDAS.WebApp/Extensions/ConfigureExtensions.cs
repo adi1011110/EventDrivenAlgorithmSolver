@@ -6,7 +6,13 @@ namespace EDAS.WebApp.Extensions;
 
 public static class ConfigureExtensions
 {
-    public static void RegisterAzureConfigs(this WebApplicationBuilder appBuilder)
+    public static void RegisterConfigs(this WebApplicationBuilder appBuilder)
+    {
+        var environment = EnvironmentUtils.GetEnvironmentVariable();
+        RegisterConfigsHelper(appBuilder, environment);
+    }
+
+    private static void RegisterAzureConfigs(this WebApplicationBuilder appBuilder)
     {
         var keyVaultName = appBuilder.Configuration["AzureConfig:KeyVaultName"];
 
@@ -25,6 +31,57 @@ public static class ConfigureExtensions
             { "EmailConfig:AppFunctionKey", emailAppFunctionKey.Value.Value }
         });
 
+        appBuilder.Services.Configure<AzureFunctionConfig>(
+            appBuilder.Configuration.GetSection("EmailConfig"));
+
+        appBuilder.Services.Configure<RabbitMQAzureConfig>(
+            appBuilder.Configuration.GetSection("RabbitMq"));
+    }
+
+    private static void RegisterDockerConfigs(WebApplicationBuilder appBuilder)
+    {
+        appBuilder.Services.Configure<RabbitMQLocalConfig>(
+            appBuilder.Configuration.GetSection("RabbitMQConfig"));
+
         appBuilder.Services.Configure<EmailConfig>(appBuilder.Configuration.GetSection("EmailConfig"));
+    }
+
+    private static void RegisterLocalConfigs(WebApplicationBuilder appBuilder)
+    {
+        appBuilder.Services.Configure<RabbitMQLocalConfig>(
+            appBuilder.Configuration.GetSection("RabbitMQConfig"));
+
+        appBuilder.Services.Configure<EmailConfig>(appBuilder.Configuration.GetSection("EmailConfig"));
+    }
+
+    private static void RegisterConfigsHelper(WebApplicationBuilder appBuilder, string environment)
+    {
+        environment = environment.ToLower();
+
+        switch (environment)
+        {
+            case EnvironmentConstants.DEVELOPMENT:
+                RegisterLocalConfigs(appBuilder);
+                break;
+            case EnvironmentConstants.DOCKER:
+                RegisterDockerConfigs(appBuilder);
+                break;
+            case EnvironmentConstants.AZURE:
+                RegisterAzureConfigs(appBuilder);
+                break;
+            default:
+                throw new InvalidOperationException("Unknown environment");
+        }
+    }
+
+    public static bool IsDockerEnv(this IHostEnvironment env)
+    {
+        bool result = false;
+        if (env.EnvironmentName.ToLower() == EnvironmentConstants.DOCKER)
+        {
+            result = true;
+        }
+
+        return result;
     }
 }

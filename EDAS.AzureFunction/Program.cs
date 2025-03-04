@@ -27,7 +27,7 @@ var host = new HostBuilder()
     .ConfigureServices((context, services) =>
     {
         services.Configure<EmailConfig>(context.Configuration.GetSection("EmailConfig"));
-        services.AddHttpClient<IEmailService, EmailService>();
+        services.AddHttpClient<IEmailService, LocalEmailService>();
     })
     .Build();
 

@@ -1,6 +1,4 @@
-﻿using EDAS.AzureFunction.Email.Model;
-
-namespace EDAS.AzureFunction.Email.Function;
+﻿namespace EDAS.AzureFunction.Email.Function;
 
 public class SendEmailFunction
 {
@@ -30,7 +28,7 @@ public class SendEmailFunction
             return badResponse;
         }
 
-        await _emailService.SendEmailAsync(emailRequest.Email, emailRequest.Subject, emailRequest.Message);
+        await _emailService.SendEmailAsync(emailRequest);
 
         var response = req.CreateResponse(HttpStatusCode.OK);
         await response.WriteStringAsync("Email sent successfully.");

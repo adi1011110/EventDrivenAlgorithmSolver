@@ -5,8 +5,17 @@ services:
       context: .
       dockerfile: EDAS.WebApp/Dockerfile
 
-  edasusersdb:
-    image: mcr.microsoft.com/mssql/server
+  edas.worker.sorting:
+    image: ${DOCKER_REGISTRY-}edasworkersorting
+    build:
+      context: .
+      dockerfile: EDAS.Worker/Dockerfile
+
+  edas.worker.combinatronics:
+    image: ${DOCKER_REGISTRY-}edasworkercombinatronics
+    build:
+      context: .
+      dockerfile: EDAS.Worker/Dockerfile
 
   rabbitmq:
     image: rabbitmq:4.0-management
