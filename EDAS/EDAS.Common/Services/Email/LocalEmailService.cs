@@ -1,28 +1,31 @@
-﻿using EDAS.AzureFunction.Email.Model;
+﻿using EDAS.Common.Models;
 using Microsoft.Extensions.Options;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 
-namespace EDAS.AzureFunction.Email.EmailService;
+namespace EDAS.Common.Services.Email;
 
-public class EmailService : IEmailService
+public class LocalEmailService : IEmailService
 {
     private readonly EmailConfig _emailConfig;
     private readonly HttpClient _httpClient;
 
-    public EmailService(IOptions<EmailConfig> emailConfigOptions,
+    public LocalEmailService(IOptions<EmailConfig> emailConfigOptions,
         HttpClient httpClient)
     {
         _emailConfig = emailConfigOptions.Value;
         _httpClient = httpClient;
     }
 
-    public async Task SendEmailAsync(string email, string subject, string htmlMessage)
+    public async Task<bool> SendEmailAsync(EmailRequest emailRequest)
     {
-        var emailContent = new
+        var emailContent = new EmailContent
         {
-            from = new { email = _emailConfig.FromEmail },
-            to = new[] { new { email } },
-            subject,
-            html = htmlMessage
+            From = new EmailAddress { Email = _emailConfig.FromEmail },
+            To = new List<EmailAddress> { new EmailAddress { Email = emailRequest.Email } },
+            Subject = emailRequest.Subject,
+            Html = emailRequest.Message
         };
 
         var jsonContent = JsonSerializer.Serialize(emailContent);
@@ -32,7 +35,8 @@ public class EmailService : IEmailService
             Content = new StringContent(jsonContent, Encoding.UTF8, "application/json")
         };
 
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _emailConfig.ApiKey);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", 
+            _emailConfig.ApiKey);
 
         try
         {
@@ -41,10 +45,13 @@ public class EmailService : IEmailService
             if (!response.IsSuccessStatusCode)
             {
                 string responseBody = await response.Content.ReadAsStringAsync();
+                return false;
             }
+            return true;
         }
         catch (Exception ex)
         {
+            return false;
         }
     }
 }

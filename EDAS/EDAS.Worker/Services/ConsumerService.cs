@@ -1,14 +1,16 @@
-﻿namespace EDAS.Worker.Services;
+﻿using EDAS.Common.Services.RabbitMQ;
+
+namespace EDAS.Worker.Services;
 
 public class ConsumerService : BackgroundService
 {
-    private readonly RabbitMQClientService _rabbitMQClientService;
+    private readonly IRabbitMQClientService _rabbitMQClientService;
     private IChannel _channel;
     private readonly IMapper _mapper;
     private readonly IServiceProvider _serviceProvider;
     private readonly RabbitMqConfig _rabbitMqConfig;
 
-    public ConsumerService(RabbitMQClientService rabbitMQClientService,
+    public ConsumerService(IRabbitMQClientService rabbitMQClientService,
         IMapper mapper,
         IServiceProvider serviceProvider,
         RabbitMqConfig rabbitMqConfig)
@@ -39,6 +41,16 @@ public class ConsumerService : BackgroundService
 
         await queue.StartConsuming();
 
-        while (!stoppingToken.IsCancellationRequested) { }
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            try
+            {
+                await Task.Delay(2_000, stoppingToken);
+            }
+            catch (Exception)
+            {
+                
+            }
+        }
     }
 }

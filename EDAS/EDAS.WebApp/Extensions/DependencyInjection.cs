@@ -1,4 +1,7 @@
-﻿using EDAS.WebApp.Services.Database;
+﻿using EDAS.Common.Services.RabbitMQ;
+using EDAS.Common.StaticDetails;
+using EDAS.WebApp.Services.Database;
+using System.Reflection.PortableExecutable;
 
 namespace EDAS.WebApp.Extensions;
 
@@ -51,10 +54,7 @@ public static class DependencyInjection
 
         var queuesConfigCollection = new QueueConfigCollection { QueuesConfig = queuesDict };
 
-        var rabbitMQUri = appBuilder.Configuration["RabbitMq:Url"];
-
-        appBuilder.Services.AddSingleton(sp =>
-            new RabbitMQClientService(rabbitMQUri));
+        RegisterEnvironmentSpecificServices(appBuilder, EnvironmentUtils.GetEnvironmentVariable());
 
         appBuilder.Services.AddScoped<IProducerFactory, ProducerFactory>();
 
@@ -62,8 +62,29 @@ public static class DependencyInjection
 
         appBuilder.Services.AddSingleton(queuesConfigCollection);
 
-        appBuilder.Services.AddHttpClient();
+        appBuilder.Services.AddHttpClient();     
+    }
 
-        appBuilder.Services.AddScoped<IEmailService, EmailService>();
+    private static void RegisterEnvironmentSpecificServices(WebApplicationBuilder builder, string env)
+    {
+        switch (env)
+        {
+            case EnvironmentConstants.AZURE:
+                builder.Services.AddSingleton<IRabbitMQClientService, 
+                    RabbitMQClientService<RabbitMQAzureConfig>>();
+                builder.Services.AddScoped<IEmailService, AzureEmailService>();
+                break;
+
+            case EnvironmentConstants.DEVELOPMENT:
+            case EnvironmentConstants.DOCKER:
+                builder.Services.AddSingleton<IRabbitMQClientService, 
+                    RabbitMQClientService<RabbitMQLocalConfig>>();
+                builder.Services.AddScoped<IEmailService, LocalEmailService>();
+                break;
+
+            default:
+                throw new InvalidOperationException($"Unknown environment for RabbitMQ: {env}");
+        }
+
     }
 }

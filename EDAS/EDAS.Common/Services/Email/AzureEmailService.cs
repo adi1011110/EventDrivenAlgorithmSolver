@@ -7,13 +7,13 @@ using System.Text.Json;
 
 namespace EDAS.Common.Services.Email;
 
-public class EmailService : IEmailService
+public class AzureEmailService : IEmailService
 {
     private readonly HttpClient _httpClient;
-    private readonly EmailConfig _emailData;
+    private readonly AzureFunctionConfig _emailData;
     private readonly string _functionUrl;
 
-    public EmailService(IHttpClientFactory httpClientFactory, IOptions<EmailConfig> emailDataOptions)
+    public AzureEmailService(IHttpClientFactory httpClientFactory, IOptions<AzureFunctionConfig> emailDataOptions)
     {
         _httpClient = httpClientFactory.CreateClient();
         _emailData = emailDataOptions.Value;

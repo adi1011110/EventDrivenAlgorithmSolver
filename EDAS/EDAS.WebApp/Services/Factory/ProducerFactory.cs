@@ -1,15 +1,16 @@
-﻿using EDAS.WebApp.Models;
+﻿using EDAS.Common.Services.RabbitMQ;
+using EDAS.WebApp.Models;
 using EDAS.WebApp.Services.Producers;
 
 namespace EDAS.WebApp.Services.Factory;
 
 public class ProducerFactory : IProducerFactory
 {
-    private readonly RabbitMQClientService _rabbitMQClientService;
+    private readonly IRabbitMQClientService _rabbitMQClientService;
     private readonly BrokerConfig _brokerConfig;
     private readonly QueueConfigCollection _queueConfigCollection;
 
-    public ProducerFactory(RabbitMQClientService rabbitMQClientService,
+    public ProducerFactory(IRabbitMQClientService rabbitMQClientService,
         IOptions<BrokerConfig> brokerConfigOptions,
         QueueConfigCollection queueConfigCollection)
     {
