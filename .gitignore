@@ -401,3 +401,7 @@ FodyWeavers.xsd
 /EDAS/EDAS.WebApp/EDASWebApp.db-shm
 /EDAS/EDAS.WebApp/EDASWebApp.db
 /EDAS/.env
+/EDAS/EDAS.Worker/Properties/serviceDependencies.json
+/EDAS/EDAS.Worker/Properties/serviceDependencies.local.json
+/EDAS/EDAS.Worker/Properties/ServiceDependencies/local/secrets1.arm.json
+/EDAS/EDAS.WebApp/.config/dotnet-tools.json

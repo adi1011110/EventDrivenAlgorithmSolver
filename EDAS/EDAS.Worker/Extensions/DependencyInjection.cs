@@ -1,5 +1,6 @@
 ﻿using EDAS.Common.Services.RabbitMQ;
 using EDAS.Common.StaticDetails;
+using Microsoft.Extensions.Options;
 using System.Reflection.PortableExecutable;
 
 namespace EDAS.Worker.Extensions;
@@ -44,15 +45,21 @@ public static class DependencyInjection
         switch (env)
         {
             case EnvironmentConstants.AZURE:
-                services.AddSingleton<IRabbitMQClientService,
-                    RabbitMQClientService<RabbitMQAzureConfig>>();
+                services.AddSingleton<IRabbitMQClientService>(sp =>
+                {
+                    var options = sp.GetRequiredService<IOptions<RabbitMQAzureConfig>>();
+                    return new RabbitMQClientService<RabbitMQAzureConfig>(options);
+                });
                 services.AddScoped<IEmailService, AzureEmailService>();
                 break;
 
             case EnvironmentConstants.DEVELOPMENT:
             case EnvironmentConstants.DOCKER:
-                services.AddSingleton<IRabbitMQClientService,
-                    RabbitMQClientService<RabbitMQLocalConfig>>();
+                services.AddSingleton<IRabbitMQClientService>(sp =>
+                {
+                    var options = sp.GetRequiredService<IOptions<RabbitMQLocalConfig>>();
+                    return new RabbitMQClientService<RabbitMQLocalConfig>(options);
+                });
                 services.AddScoped<IEmailService, LocalEmailService>();
                 break;
 

@@ -58,6 +58,9 @@ public static class ConfigureExtensions
 
         appBuilder.Services.Configure<BrokerConfig>(appBuilder.Configuration.GetSection("RabbitMqConfig:Broker"));
 
+        appBuilder.Services.Configure<RabbitMQAzureConfig>(
+                    appBuilder.Configuration.GetSection("RabbitMq"));
+
         var workerType = appBuilder.Configuration["WorkerType:Type"];
 
         var queuesDict = appBuilder.Configuration
